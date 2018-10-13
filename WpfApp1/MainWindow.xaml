@@ -4,9 +4,160 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
+        xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        
+        Title="MainWindow" WindowState="Maximized" MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseWheel="Window_MouseWheel">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+
+        </Grid.RowDefinitions>
+        <!--<WindowsFormsHost Name="OpentkWindow" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" Initialized="OpenTkControl_Initialized" SizeChanged="OpentkWindow_OnSizeChanged"
+                          helpers:SizeObserver.Observe="True"
+                          helpers:SizeObserver.ObservedHeight="{Binding Scene.Height, Mode=OneWayToSource}"
+                          helpers:SizeObserver.ObservedWidth="{Binding Scene.Width, Mode=OneWayToSource}"/>-->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="19.5"/>
+                <ColumnDefinition Width="82.5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+
+                <Grid HorizontalAlignment="Stretch" ColumnSpan="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <!--<ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>-->
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Content="Load file"></Button>
+                    <Button Grid.Column="1" Content="Start simulation"></Button>
+                    <Button Grid.Column="2" Content="Simulation result"></Button>
+                    <!--<Button Grid.Column="3"></Button>
+                    <Button Grid.Column="4"></Button>
+                    <Button Grid.Column="5"></Button>-->
+                </Grid>
+            <Label  Grid.Row="4" Content="Material width" Grid.ColumnSpan="2"></Label>
+            <TextBox Grid.Column="2" Grid.Row="4" Text="{Binding Scene.MillingSimulator1.MaterialWidth}"></TextBox>
+
+            <Label Grid.Row="5" Content="Material depht" Grid.ColumnSpan="2"></Label>
+            <TextBox Grid.Column="2" Grid.Row="5" Text="{Binding Scene.MillingSimulator1.MaterialDepth}"></TextBox>
+
+            <Label Grid.Row="6" Content="Material height" Grid.ColumnSpan="2"></Label>
+            <TextBox Grid.Column="2" Grid.Row="6" Text="{Binding Scene.MillingSimulator1.MaterialHeight}"></TextBox>
+
+            <Label Grid.Row="7" Content="Divisions number" Grid.ColumnSpan="2"></Label>
+            <TextBox Grid.Column="2" Grid.Row="7" Text="{Binding Scene.MillingSimulator1.ArraySize}"></TextBox>
+
+            <Label Grid.Row="8" Content="Spherical cutter" Grid.ColumnSpan="2"></Label>
+            <CheckBox Grid.Column="2" Grid.Row="8" IsChecked="{Binding Scene.MillingSimulator1.Cutter1.IsCutterSpherical}"></CheckBox>
+
+            <Label Grid.Row="9" Content="Cutter diameter" Grid.ColumnSpan="2"></Label>
+            <TextBox Grid.Column="2" Grid.Row="9" Text="{Binding Scene.MillingSimulator1.Cutter1.CutterDiameter}"></TextBox>
+
+            <Label Grid.Row="10" Content="Feed depth" Grid.ColumnSpan="2"></Label>
+            <TextBox Grid.Column="2" Grid.Row="10" Text="{Binding Scene.MillingSimulator1.Cutter1.FeedDepth}"></TextBox>
+
+
+
+            <ListView Grid.Row="11" Grid.ColumnSpan="3" ItemsSource="{Binding Scene.MillingSimulator1.PointsList}">
+                <!--<GridViewColumn Header="X" Width="60" DisplayMemberBinding="{Binding X, StringFormat=N2}"/>-->
+                <!--<GridViewColumn Header="Y" Width="60" DisplayMemberBinding="{Binding X, StringFormat=N2}"/>
+                            <GridViewColumn Header="Z" Width="60" DisplayMemberBinding="{Binding X, StringFormat=N2}"/>-->
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <!--<Setter Property="IsSelected" Value="{Binding Selected}"></Setter>-->
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+
+                    <GridView >
+
+                        <GridViewColumn Header="Line number" Width="Auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding LineNumber}"  HorizontalAlignment="Right"></Label>
+
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Move command" Width="Auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding LinearMoveCommandNumber}"  HorizontalAlignment="Right"></Label>
+
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="X" Width="70" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding X}"  HorizontalAlignment="Right"></Label>
+
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Y" Width="70">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Y}" HorizontalAlignment="Right"></Label>
+
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+
+                        <GridViewColumn Header="Z" Width="70">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Z}" HorizontalAlignment="Right"></Label>
+
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+
+                </ListView.View>
+
+            </ListView>
+            </Grid>
+        <WindowsFormsHost Grid.Column="0"  Grid.Row="0" Name="OpentkWindow" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="False" >      
+        </WindowsFormsHost>
         
     </Grid>
 </Window>
