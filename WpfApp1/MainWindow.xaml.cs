@@ -3,13 +3,14 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
+using ModelowanieGeometryczne.ViewModel;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace WpfApp1
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window 
     {
         #region Constructors and Destructors
 
@@ -30,7 +31,7 @@ namespace WpfApp1
             timer.Interval = TimeSpan.FromMilliseconds(1);
             timer.Tick += TimerOnTick;
             timer.Start();
-            vboRenderer.OnLoad();
+            MainViewModel1.MillingSimulator1.OnLoad();
             var Width = 1500;
             var Height = 900;
 
@@ -67,7 +68,19 @@ namespace WpfApp1
 
         #region Fields
 
-        private readonly VBO_Renderer vboRenderer = new VBO_Renderer();
+        private MainViewModel _mainViewModel=new MainViewModel();
+
+        public MainViewModel MainViewModel1
+        {
+            get { return _mainViewModel; }
+            set
+            {
+                _mainViewModel = value;
+                
+            }
+        }
+
+
         private int frames;
 
         private readonly GLControl glControl;
@@ -100,9 +113,9 @@ namespace WpfApp1
 
 
 
-          //  GL.Viewport(0, 0, Width, Height);
-            vboRenderer.OnUpdateFrame();
-            vboRenderer.OnRenderFrame(_alphaX, _alphaY, _alphaZ);
+            //  GL.Viewport(0, 0, Width, Height);
+            MainViewModel1.MillingSimulator1.OnUpdateFrame();
+            MainViewModel1.MillingSimulator1.OnRenderFrame(_alphaX, _alphaY, _alphaZ);
 
 
             glControl.SwapBuffers();
@@ -125,7 +138,7 @@ namespace WpfApp1
 
         private void _glControl_MouseWheel(object sender, MouseEventArgs e)
         {
-            vboRenderer.Scale += e.Delta;
+            MainViewModel1.MillingSimulator1.Scale += e.Delta;
             Refresh();
         }
 
@@ -183,8 +196,13 @@ namespace WpfApp1
 
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            vboRenderer.Scale += e.Delta / 100000.0;
+            MainViewModel1.MillingSimulator1.Scale += e.Delta / 100000.0;
             Refresh();
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainViewModel1.MillingSimulator1.LoadPath();
         }
     }
 

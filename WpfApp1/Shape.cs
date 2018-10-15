@@ -1,6 +1,8 @@
-﻿using OpenTK;
+﻿using ModelowanieGeometryczne.ViewModel;
+using OpenTK;
 
-public abstract class Shape
+public abstract class Shape : ViewModelBase
+
 {
     public Vector3[] Vertices { get; protected set; }
 

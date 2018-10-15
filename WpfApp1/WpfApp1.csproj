@@ -61,8 +61,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Cutter.cs" />
+    <Compile Include="CutterCylinder.cs" />
+    <Compile Include="CutterSphere.cs" />
+    <Compile Include="FileReader.cs" />
+    <Compile Include="MainViewModel.cs" />
+    <Compile Include="Material.cs" />
+    <Compile Include="MillingMove.cs" />
     <Compile Include="Shape.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="VBOHelpers.cs" />
+    <Compile Include="ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -78,7 +87,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="MillingSimulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
