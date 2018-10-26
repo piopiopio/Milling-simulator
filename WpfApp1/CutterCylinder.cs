@@ -12,7 +12,8 @@ namespace Examples.Shapes2
     public class CutterCylinder : Shape
     {
         Vector3 _centerPoint= new Vector3(0, 0, 0);
-
+        List<int> indices;
+        List<Vector3>vertices;
         public Vector3 CenterPoint
         {
             get { return _centerPoint; }
@@ -38,34 +39,28 @@ namespace Examples.Shapes2
 
         private double Height;
 
+
         private void RefreshVertices()
         {
 
 
 
-            List<int> indices;
-            var vertices = CreateCylinder(out indices);
-
-            Indices = indices.ToArray();
-            //Normals = new Vector3[vertices.Count];
 
 
 
-            //foreach (int index in indices)
+
+
+
+            //for (int i = 0; i < Vertices.Length; i++)
             //{
-            //    var vertex = vertices[index];
-            //    Normals[index] = (new Vector3((float)(vertex.X / Radius), 0, (float)(vertex.Z / Radius)));
-
+            //    Vertices[i] += CenterPoint;
             //}
 
 
-            Vertices = vertices.ToArray();
-
             for (int i = 0; i < Vertices.Length; i++)
             {
-                Vertices[i] += CenterPoint;
+                Vertices[i] = vertices[i] + CenterPoint;
             }
-
 
 
         }
@@ -108,6 +103,9 @@ namespace Examples.Shapes2
             //depth_of_single_cube = MaterialDepth / Pieces;
 
             //Vertices = new Vector3[Pieces * Pieces * 8 * 3];
+            vertices = CreateCylinder(out indices);
+            Vertices = vertices.ToArray();
+            Indices = indices.ToArray();
             RefreshVertices();
 
             //RandomHeigts();

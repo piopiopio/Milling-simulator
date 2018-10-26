@@ -9,97 +9,93 @@ using System.Runtime.InteropServices;
 
 namespace Examples.Shapes
 {
+
+
     public class Cubes : Shape
     {
-        const int Pieces = 200;
+
+
+        private double _materialWidth;
+        private double _materialHeight;
+        private double _materialDepth;
+        private int _divisions;
+
+
         private float a;
         private float b;
-
-        private float MaterialWidth = 150;
-        private float MaterialDepth = 150;
-
         private float width_of_single_cube;
         private float depth_of_single_cube;
-        private float[,] heightArray = new float[Pieces, Pieces];
+        private float[,] heightArray;
 
-        public float[,] HeightArray
-        {
-            get { return heightArray; }
-            set
-            {
-                heightArray = value;
-                RefreshVertices();
-            }
-        }
 
-        public void RandomHeigts()
-        {
-            Random rnd = new Random();
-            for (int i = 0; i < Pieces; i++)
-            {
-                for (int j = 0; j < Pieces; j++)
-                {
-                    heightArray[i, j] = rnd.Next(30, 50);
-                }
-            }
-            RefreshVertices();
-        }
+
 
         private void RefreshVertices()
         {
-            a = -MaterialWidth/2;
-            b = -MaterialDepth/2;
-            var c = width_of_single_cube/2;
-            var d = depth_of_single_cube/2;
-            for (int i = 0; i < Pieces; i++)
+            var c = width_of_single_cube / 2;
+            var d = depth_of_single_cube / 2;
+
+            a = (float)-_materialWidth / 2 + c;
+            b = (float)-_materialDepth / 2 + d;
+
+            for (int i = 0; i < _divisions; i++)
             {
-                for (int j = 0; j < Pieces; j++)
+                for (int j = 0; j < _divisions; j++)
                 {
 
-                    Vertices[i * 24 + j * 24 * Pieces + 0] = new Vector3(-c + a, heightArray[i, j], d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 1] = new Vector3(c + a, heightArray[i, j], d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 2] = new Vector3(c + a, 0, d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 3] = new Vector3(-c + a, 0, d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 4] = new Vector3(-c + a, heightArray[i, j], -d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 5] = new Vector3(c + a, heightArray[i, j], -d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 6] = new Vector3(c + a, 0, -d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 7] = new Vector3(-c + a, 0, -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 0] = new Vector3(-c + a, heightArray[i, j], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 1] = new Vector3(c + a, heightArray[i, j], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 2] = new Vector3(c + a, 0, d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 3] = new Vector3(-c + a, 0, d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 4] = new Vector3(-c + a, heightArray[i, j], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 5] = new Vector3(c + a, heightArray[i, j], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 6] = new Vector3(c + a, 0, -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 7] = new Vector3(-c + a, 0, -d + b);
 
-                    Vertices[i * 24 + j * 24 * Pieces + 0 + 8] = new Vector3(-c + a, heightArray[i, j], d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 1 + 8] = new Vector3(c + a, heightArray[i, j], d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 2 + 8] = new Vector3(c + a, 0, d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 3 + 8] = new Vector3(-c + a, 0, d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 4 + 8] = new Vector3(-c + a, heightArray[i, j], -d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 5 + 8] = new Vector3(c + a, heightArray[i, j], -d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 6 + 8] = new Vector3(c + a, 0, -d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 7 + 8] = new Vector3(-c + a, 0, -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 0 + 8] = new Vector3(-c + a, heightArray[i, j], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 1 + 8] = new Vector3(c + a, heightArray[i, j], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 2 + 8] = new Vector3(c + a, 0, d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 3 + 8] = new Vector3(-c + a, 0, d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 4 + 8] = new Vector3(-c + a, heightArray[i, j], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 5 + 8] = new Vector3(c + a, heightArray[i, j], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 6 + 8] = new Vector3(c + a, 0, -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 7 + 8] = new Vector3(-c + a, 0, -d + b);
 
-                    Vertices[i * 24 + j * 24 * Pieces + 0 + 16] = new Vector3(-c + a, heightArray[i, j], d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 1 + 16] = new Vector3(c + a, heightArray[i, j], d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 2 + 16] = new Vector3(c + a, 0, d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 3 + 16] = new Vector3(-c + a, 0, d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 4 + 16] = new Vector3(-c + a, heightArray[i, j], -d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 5 + 16] = new Vector3(c + a, heightArray[i, j], -d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 6 + 16] = new Vector3(c + a, 0, -d + b);
-                    Vertices[i * 24 + j * 24 * Pieces + 7 + 16] = new Vector3(-c + a, 0, -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 0 + 16] = new Vector3(-c + a, heightArray[i, j], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 1 + 16] = new Vector3(c + a, heightArray[i, j], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 2 + 16] = new Vector3(c + a, 0, d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 3 + 16] = new Vector3(-c + a, 0, d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 4 + 16] = new Vector3(-c + a, heightArray[i, j], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 5 + 16] = new Vector3(c + a, heightArray[i, j], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 6 + 16] = new Vector3(c + a, 0, -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 7 + 16] = new Vector3(-c + a, 0, -d + b);
                     a += width_of_single_cube;
                 }
 
 
-                a = -MaterialWidth / 2;
+                a = (float)-_materialWidth / 2 + c;
                 b += depth_of_single_cube;
             }
         }
 
-        public Cubes()
+        public Cubes(double materialWidth, double materialHeight, double materialDepth, int divisions)
         {
-            width_of_single_cube = MaterialWidth / Pieces;
-            depth_of_single_cube = MaterialDepth / Pieces;
 
-            Vertices = new Vector3[Pieces * Pieces * 8 * 3];
+          _materialWidth=materialWidth;
+            _materialHeight=materialHeight;
+            _materialDepth = materialDepth;
+            _divisions = divisions;
+
+            heightArray = new float[_divisions, _divisions];
+            width_of_single_cube = (float)_materialWidth / _divisions;
+            depth_of_single_cube = (float)_materialDepth / _divisions;
+
+            Vertices = new Vector3[_divisions * _divisions * 8 * 3];
+            InitializeHeightArray((float)materialHeight);
             RefreshVertices();
 
-            RandomHeigts();
+            //RandomHeigts();
+
             int[] IndicesTemp = new int[]
             {
                 0+16, 1+16, 2+16, 3+16, //z
@@ -118,9 +114,9 @@ namespace Examples.Shapes
             };
 
 
-            Indices = new int[IndicesTemp.Length * Pieces * Pieces];
+            Indices = new int[IndicesTemp.Length * _divisions * _divisions];
 
-            for (int i = 0; i < Pieces * Pieces; i++)
+            for (int i = 0; i < _divisions * _divisions; i++)
             {
                 for (int j = 0; j < IndicesTemp.Length; j++)
                 {
@@ -129,8 +125,8 @@ namespace Examples.Shapes
             }
 
             // Normals = new Vector3[Pieces * Pieces * 8];
-            Normals = new Vector3[Pieces * Pieces * 8 * 3];
-            for (int i = 0; i < Pieces * Pieces; i++)
+            Normals = new Vector3[_divisions * _divisions * 8 * 3];
+            for (int i = 0; i < _divisions * _divisions; i++)
             //for (int i = 0; i < Pieces * Pieces; i++)
             {
                 Normals[i * 24 + 0] = new Vector3(0.0f, 1.0f, 0.0f);
@@ -165,8 +161,8 @@ namespace Examples.Shapes
 
             };
 
-            Colors = new int[Pieces * Pieces * 8 * 3];
-            for (int i = 0; i < Pieces * Pieces; i++)
+            Colors = new int[_divisions * _divisions * 8 * 3];
+            for (int i = 0; i < _divisions * _divisions; i++)
             {
                 Colors[i * 24 + 0] = Utilities.ColorToRgba32(Color.Coral);
                 Colors[i * 24 + 1] = Utilities.ColorToRgba32(Color.Blue);
@@ -209,137 +205,18 @@ namespace Examples.Shapes
             };
         }
 
+        private void InitializeHeightArray(float h)
+        {
 
+            for (int i = 0; i < _divisions; i++)
+            {
+                for (int j = 0; j < _divisions; j++)
+                {
+                    heightArray[i, j] = h;
+                }
+            }
+            RefreshVertices();
+
+        }
     }
 }
-
-
-//using System;
-//using System.Collections.Generic;
-//using System.Text;
-//using System.Drawing;
-
-//using OpenTK;
-//using System.Runtime.InteropServices;
-
-//namespace Examples.Shapes
-//{
-//    public class Cubes : Shape
-//    {
-//        public Cubes()
-//        {
-//            Vertices = new Vector3[]
-//            {
-//                new Vector3(-1.0f, -1.0f,  1.0f),
-//                new Vector3( 1.0f, -1.0f,  1.0f),
-//                new Vector3( 1.0f,  1.0f,  1.0f),
-//                new Vector3(-1.0f,  1.0f,  1.0f),
-//                new Vector3(-1.0f, -1.0f, -1.0f),
-//                new Vector3( 1.0f, -1.0f, -1.0f),
-//                new Vector3( 1.0f,  1.0f, -1.0f),
-//                new Vector3(-1.0f,  1.0f, -1.0f),
-
-//                new Vector3(-1.0f+2.0f, -1.0f,  1.0f),
-//                new Vector3( 1.0f+2.0f, -1.0f,  1.0f),
-//                new Vector3( 1.0f+2.0f,  1.0f,  1.0f),
-//                new Vector3(-1.0f+2.0f,  1.0f,  1.0f),
-//                new Vector3(-1.0f+2.0f, -1.0f, -1.0f),
-//                new Vector3( 1.0f+2.0f, -1.0f, -1.0f),
-//                new Vector3( 1.0f+2.0f,  1.0f, -1.0f),
-//                new Vector3(-1.0f+2.0f,  1.0f, -1.0f)
-//            };
-
-//            Indices = new int[]
-//            {
-//                // front face
-//                0, 1, 2, 2, 3, 0,
-//                // top face
-//                3, 2, 6, 6, 7, 3,
-//                // back face
-//                7, 6, 5, 5, 4, 7,
-//                // left face
-//                4, 0, 3, 3, 7, 4,
-//                // bottom face
-//                0, 1, 5, 5, 4, 0,
-//                // right face
-//                1, 5, 6, 6, 2, 1,
-
-//                // front face
-//                8, 9, 10, 10, 11, 8,
-//                // top face
-//                11, 10, 14, 14, 15, 11,
-//                // back face
-//                15, 14, 13, 13, 12, 15,
-//                // left face
-//                12, 8, 11, 11, 15, 12,
-//                // bottom face
-//                8, 9, 13, 13, 12, 8,
-//                // right face
-//                9,13, 14, 14, 10, 9,
-//            };
-
-//            Normals = new Vector3[]
-//            {
-//                new Vector3(-1.0f, -1.0f,  1.0f),
-//                new Vector3( 1.0f, -1.0f,  1.0f),
-//                new Vector3( 1.0f,  1.0f,  1.0f),
-//                new Vector3(-1.0f,  1.0f,  1.0f),
-//                new Vector3(-1.0f, -1.0f, -1.0f),
-//                new Vector3( 1.0f, -1.0f, -1.0f),
-//                new Vector3( 1.0f,  1.0f, -1.0f),
-//                new Vector3(-1.0f,  1.0f, -1.0f),
-
-//                new Vector3(-1.0f, -1.0f,  1.0f),
-//                new Vector3( 1.0f, -1.0f,  1.0f),
-//                new Vector3( 1.0f,  1.0f,  1.0f),
-//                new Vector3(-1.0f,  1.0f,  1.0f),
-//                new Vector3(-1.0f, -1.0f, -1.0f),
-//                new Vector3( 1.0f, -1.0f, -1.0f),
-//                new Vector3( 1.0f,  1.0f, -1.0f),
-//                new Vector3(-1.0f,  1.0f, -1.0f),
-//            };
-
-//            Colors = new int[]
-//            {
-//                Utilities.ColorToRgba32(Color.DarkRed),
-//                Utilities.ColorToRgba32(Color.DarkRed),
-//                Utilities.ColorToRgba32(Color.Gold),
-//                Utilities.ColorToRgba32(Color.Gold),
-//                Utilities.ColorToRgba32(Color.DarkRed),
-//                Utilities.ColorToRgba32(Color.DarkRed),
-//                Utilities.ColorToRgba32(Color.Gold),
-//                Utilities.ColorToRgba32(Color.Gold),
-//                Utilities.ColorToRgba32(Color.DarkRed),
-//                Utilities.ColorToRgba32(Color.DarkRed),
-//                Utilities.ColorToRgba32(Color.Gold),
-//                Utilities.ColorToRgba32(Color.Gold),
-//                Utilities.ColorToRgba32(Color.DarkRed),
-//                Utilities.ColorToRgba32(Color.DarkRed),
-//                Utilities.ColorToRgba32(Color.Gold),
-//                Utilities.ColorToRgba32(Color.Gold),
-//            };
-
-//            Texcoords = new Vector2[]
-//            {
-//                new Vector2(0, 1),
-//                new Vector2(1, 1),
-//                new Vector2(1, 0),
-//                new Vector2(0, 0),
-//                new Vector2(0, 1),
-//                new Vector2(1, 1),
-//                new Vector2(1, 0),
-//                new Vector2(0, 0),
-//                new Vector2(0, 1),
-//                new Vector2(1, 1),
-//                new Vector2(1, 0),
-//                new Vector2(0, 0),
-//                new Vector2(0, 1),
-//                new Vector2(1, 1),
-//                new Vector2(1, 0),
-//                new Vector2(0, 0),
-//            };
-//        }
-
-
-//    }
-//}

@@ -27,17 +27,17 @@ namespace WpfApp1
             }
         }
 
-        private bool _cutterIsSpherical;
+        public bool CutterIsSpherical;
 
-        public bool CutterIsSpherical
-        {
-            get { return _cutterIsSpherical; }
-            set
-            {
-                _cutterIsSpherical = value;
-                OnPropertyChanged(nameof(CutterIsSpherical));
-            }
-        }
+        //public bool CutterIsSpherical
+        //{
+        //    get { return _cutterIsSpherical; }
+        //    set
+        //    {
+        //        _cutterIsSpherical = value;
+        //        OnPropertyChanged(nameof(CutterIsSpherical));
+        //    }
+        //}
 
         private int _cutterDiameter;
 
@@ -52,7 +52,7 @@ namespace WpfApp1
         }
 
 
-        public void ParseGCode(string opFileName)
+        public ObservableCollection<LinearMillingMove> ParseGCode(string opFileName)
         {
 
 
@@ -62,12 +62,13 @@ namespace WpfApp1
             else
             {
                 MessageBox.Show("Unknow file type");
-                return;
+                return null;
             }
             CutterDiameter = Int32.Parse(fileExtension.Substring(1));
 
             MessageBox.Show(CutterIsSpherical + "  " + CutterDiameter);
             PointsList = LoadGCode(opFileName);
+            return PointsList;
         }
 
         public ObservableCollection<LinearMillingMove> LoadGCode(string fileName)

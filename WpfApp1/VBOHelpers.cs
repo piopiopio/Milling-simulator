@@ -20,6 +20,7 @@ namespace WpfApp1
             public int NumElements;
         }
 
+
         public static VBOHelpers.Vbo LoadVBO(Shape shape)
         {
             var vbo = new VBOHelpers.Vbo();

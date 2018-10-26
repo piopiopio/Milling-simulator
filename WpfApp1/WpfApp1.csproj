@@ -67,7 +67,7 @@
     <Compile Include="FileReader.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Material.cs" />
-    <Compile Include="MillingMove.cs" />
+    <Compile Include="LinearMillingMove.cs" />
     <Compile Include="Shape.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="VBOHelpers.cs" />

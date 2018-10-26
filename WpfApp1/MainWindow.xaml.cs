@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ModelowanieGeometryczne.ViewModel;
@@ -10,22 +11,16 @@ using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace WpfApp1
 {
-    public partial class MainWindow : Window 
+    public partial class MainWindow : Window
     {
         #region Constructors and Destructors
 
         public MainWindow()
         {
             InitializeComponent();
-            glControl = new GLControl();
+            DataContext = MainViewModel1;
 
-            glControl.TopLevel = false;
-            glControl.Paint += GlControlOnPaint;
-            // glControl.MouseWheel += _glControl_MouseWheel;
-            glControl.MouseDown += _glControl_MouseDown;
-            glControl.MouseMove += _glControl_MouseMove;
 
-            OpentkWindow.Child = glControl;
 
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(1);
@@ -38,7 +33,7 @@ namespace WpfApp1
             GL.Viewport(0, 0, Width, Height);
 
             GL.MatrixMode(MatrixMode.Projection);
-           var p = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)Width / (float) Height, 1.0f, 64.0f);
+            var p = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)Width / (float)Height, 1.0f, 64.0f);
             GL.LoadMatrix(ref p);
 
             GL.MatrixMode(MatrixMode.Modelview);
@@ -55,35 +50,37 @@ namespace WpfApp1
             float[] light_ambient = { 0.2f, 0.1f, 0.1f };
             float[] light_specular = { 0.2f, 0.1f, 0.1f };
             GL.Light(LightName.Light0, LightParameter.Position, light_position);
-            GL.Light(LightName.Light0, LightParameter.Diffuse, light_diffuse );
+            GL.Light(LightName.Light0, LightParameter.Diffuse, light_diffuse);
             GL.Light(LightName.Light0, LightParameter.Ambient, light_ambient);
             GL.Light(LightName.Light0, LightParameter.Specular, light_specular);
 
 
             GL.Enable(EnableCap.Light0);
 
+
+            MainViewModel1.MillingSimulator1.Cutter1.RefreshScene += Scene_RefreshScene;
         }
 
         #endregion
 
         #region Fields
 
-        private MainViewModel _mainViewModel=new MainViewModel();
+        private MainViewModel MainViewModel1 = new MainViewModel();
 
-        public MainViewModel MainViewModel1
-        {
-            get { return _mainViewModel; }
-            set
-            {
-                _mainViewModel = value;
-                
-            }
-        }
+        //public MainViewModel MainViewModel1
+        //{
+        //    get { return _mainViewModel; }
+        //    set
+        //    {
+        //        _mainViewModel = value;
+
+        //    }
+        //}
 
 
         private int frames;
 
-        private readonly GLControl glControl;
+        private GLControl glControl;
 
         private DateTime lastMeasureTime;
 
@@ -104,9 +101,9 @@ namespace WpfApp1
             //  GL.MatrixMode(MatrixMode.Projection);
             //    GL.LoadIdentity();
             var halfWidth = glControl.Width / 2;
-            var halfHeight = (float) (glControl.Height / 2);
+            var halfHeight = (float)(glControl.Height / 2);
             //  GL.Ortho(-10, 10, 10, -10, 10, -10);
-             GL.Viewport(0,0,glControl.Size.Width, glControl.Size.Height);
+            GL.Viewport(0, 0, glControl.Size.Width, glControl.Size.Height);
             //double Scale = 5;
             //GL.Scale(Scale,Scale,Scale);
             //renderer.Render();
@@ -127,14 +124,18 @@ namespace WpfApp1
         {
             if (DateTime.Now.Subtract(lastMeasureTime) > TimeSpan.FromSeconds(1))
             {
-                Title = frames + "fps";
+                Title = "PUSN: " + frames + "fps";
                 frames = 0;
                 lastMeasureTime = DateTime.Now;
             }
 
-            glControl.Invalidate();
+            // glControl.Invalidate();
         }
 
+        void Scene_RefreshScene(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            glControl.Invalidate();
+        }
 
         private void _glControl_MouseWheel(object sender, MouseEventArgs e)
         {
@@ -176,7 +177,7 @@ namespace WpfApp1
             var temp = e.GetPosition(this);
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                MouseMoveRotate((int) temp.X, (int) temp.Y);
+                MouseMoveRotate((int)temp.X, (int)temp.Y);
                 Refresh();
             }
         }
@@ -200,9 +201,31 @@ namespace WpfApp1
             Refresh();
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private void LoadPath_OnClick(object sender, RoutedEventArgs e)
         {
             MainViewModel1.MillingSimulator1.LoadPath();
+        }
+
+        private void OpentkWindow_OnInitialized(object sender, EventArgs e)
+        {
+            glControl = new GLControl();
+            //glControl.MakeCurrent();
+            glControl.TopLevel = false;
+            glControl.Paint += GlControlOnPaint;
+            // glControl.MouseWheel += _glControl_MouseWheel;
+            glControl.MouseDown += _glControl_MouseDown;
+            glControl.MouseMove += _glControl_MouseMove;
+            glControl.MouseWheel += GlControl_MouseWheel;
+            (sender as WindowsFormsHost).Child = glControl;
+        }
+        void GlControl_MouseWheel(object sender, MouseEventArgs e)
+        {
+            return;
+        }
+
+        private void StartSimulation_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainViewModel1.MillingSimulator1.StartSimulation();
         }
     }
 

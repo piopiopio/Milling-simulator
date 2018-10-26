@@ -16,6 +16,7 @@ namespace ModelowanieGeometryczne.ViewModel
             set
             {
                 _millingSimulator = value;
+                OnPropertyChanged(nameof(MillingSimulator1));
                 
             }
         }

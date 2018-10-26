@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Examples.Shapes1;
 using Examples.Shapes2;
 using ModelowanieGeometryczne.ViewModel;
@@ -17,45 +19,69 @@ namespace ModelowanieGeometryczne.Model
 
         public VBOHelpers.Vbo vbo1;
         private VBOHelpers.Vbo vbo2;
-        private CutterSphere shape1 = new CutterSphere(new Vector3(0, 100, 0), 20);
-        private CutterCylinder shape2 = new CutterCylinder(new Vector3(0, 100, 0), 20);
+        private CutterSphere shape1;
+        private CutterCylinder shape2;
 
-        public Cutter()
+        public Cutter(Vector3 centerPoint)
         {
-
+            _centerPoint = centerPoint;
+            shape1 = new CutterSphere(_centerPoint, _cutterDiameter/2);
+            shape2 = new CutterCylinder(_centerPoint, _cutterDiameter/2);
         }
 
         public void OnLoad()
         {
             vbo1 = VBOHelpers.LoadVBO(shape1);
             vbo2 = VBOHelpers.LoadVBO(shape2);
-
         }
 
 
-        Vector3 _centerPoint = new Vector3();
+        Vector3 _centerPoint;// = new Vector3(0, 100, 0);
 
         public Vector3 CenterPoint
         {
             get { return _centerPoint; }
             set
             {
+                //TODO: Dodać metode do zmieniania ce 
                 _centerPoint = value;
+                //if (_cutterIsSphercal)
+                //{
+                //    shape1 = new CutterSphere(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+                //    shape2 = new CutterCylinder(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+
+
+                //}
+                //else
+                //{
+                //    shape1 = new CutterSphere(CenterPoint, CutterDiameter / 2);
+                //    shape2 = new CutterCylinder(CenterPoint, CutterDiameter / 2);
+                //}
+
+                shape1.CenterPoint = _centerPoint;
+                shape2.CenterPoint = _centerPoint;
+                //OnLoad();
+
+                OnUpdateFrame();
+
+
                 OnPropertyChanged(nameof(CenterPoint));
+                Refresh();
             }
-        }
+            
+    }
 
-        private int _cutterDiameter;
+        // private int _cutterDiameter=20;
 
-        public int CutterDiameter
-        {
-            get { return _cutterDiameter; }
-            set
-            {
-                _cutterDiameter = value;
-                OnPropertyChanged(nameof(CutterDiameter));
-            }
-        }
+        //public int CutterDiameter
+        //{
+        //    get { return _cutterDiameter; }
+        //    set
+        //    {
+        //        _cutterDiameter = value;
+        //        OnPropertyChanged(nameof(CutterDiameter));
+        //    }
+        //}
 
         private double _feedDepth;
 
@@ -69,7 +95,7 @@ namespace ModelowanieGeometryczne.Model
             }
         }
 
-        private bool _cutterIsSphercal;
+        private bool _cutterIsSphercal = false;
 
         public bool CutterIsSpherical
         {
@@ -77,19 +103,54 @@ namespace ModelowanieGeometryczne.Model
             set
             {
                 _cutterIsSphercal = value;
+
+
+                if (_cutterIsSphercal)
+                {
+                    shape1 = new CutterSphere(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+                    shape2 = new CutterCylinder(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+
+
+                }
+                else
+                {
+                    shape1 = new CutterSphere(CenterPoint, CutterDiameter / 2);
+                    shape2 = new CutterCylinder(CenterPoint, CutterDiameter / 2);
+                }
+
+                OnLoad();
+
+                OnUpdateFrame();
                 OnPropertyChanged(nameof(CutterIsSpherical));
+                Refresh();
+
             }
         }
 
-        float _radius;
 
-        public float Radius
+        float _cutterDiameter = 20;
+
+        public float CutterDiameter
         {
-            get { return _radius; }
+            get { return _cutterDiameter; }
             set
             {
-                _radius = value;
-                Radius = _radius;
+                _cutterDiameter = value;
+                if (_cutterIsSphercal)
+                {
+                    shape1 = new CutterSphere(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+                    shape2 = new CutterCylinder(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+
+
+                }
+                else
+                {
+                    shape1 = new CutterSphere(CenterPoint, CutterDiameter / 2);
+                    shape2 = new CutterCylinder(CenterPoint, CutterDiameter / 2);
+                }
+
+                OnPropertyChanged(nameof(CutterDiameter));
+                Refresh();
 
             }
         }
@@ -104,12 +165,29 @@ namespace ModelowanieGeometryczne.Model
                 shape2.Vertices, BufferUsageHint.DynamicDraw);
         }
 
-        
+
 
         public void Draw()
         {
-           VBOHelpers.Draw(vbo1, "QuadStrip");
-           VBOHelpers.Draw(vbo2, "Triangles");
+            if (CutterIsSpherical)
+            {
+                VBOHelpers.Draw(vbo1, "QuadStrip");
+            }
+
+            VBOHelpers.Draw(vbo2, "Triangles");
+            //Refresh();
+        }
+
+
+
+        public event PropertyChangedEventHandler RefreshScene;
+
+        private void Refresh()
+        {
+            //BusyEllipseLed = 1;
+            if (RefreshScene != null)
+                RefreshScene(this, new PropertyChangedEventArgs("RefreshScene"));
+            //BusyEllipseLed = 0;
         }
     }
 }
