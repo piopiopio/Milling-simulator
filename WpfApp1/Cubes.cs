@@ -6,6 +6,7 @@ using System.Drawing;
 
 using OpenTK;
 using System.Runtime.InteropServices;
+using OpenTK.Graphics;
 
 namespace Examples.Shapes
 {
@@ -25,12 +26,16 @@ namespace Examples.Shapes
         private float b;
         private float width_of_single_cube;
         private float depth_of_single_cube;
-        private float[,] heightArray;
+        public float[,] heightArray;
+
+        //public float[,] HeightArray
+        //{
+        //    get { return heightArray; }
+        //    set { }
+        //}
 
 
-
-
-        private void RefreshVertices()
+        public void RefreshVertices()
         {
             var c = width_of_single_cube / 2;
             var d = depth_of_single_cube / 2;
@@ -217,6 +222,11 @@ namespace Examples.Shapes
             }
             RefreshVertices();
 
+        }
+
+        public void ModifyHeightArray(int item1, int item2, float f)
+        {
+            if (heightArray[item1, item2] > f) heightArray[item1, item2] = f;
         }
     }
 }

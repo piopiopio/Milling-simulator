@@ -25,8 +25,8 @@ namespace ModelowanieGeometryczne.Model
         public Cutter(Vector3 centerPoint)
         {
             _centerPoint = centerPoint;
-            shape1 = new CutterSphere(_centerPoint, _cutterDiameter/2);
-            shape2 = new CutterCylinder(_centerPoint, _cutterDiameter/2);
+            shape1 = new CutterSphere(_centerPoint, _cutterDiameter / 2);
+            shape2 = new CutterCylinder(_centerPoint, _cutterDiameter / 2);
         }
 
         public void OnLoad()
@@ -40,36 +40,21 @@ namespace ModelowanieGeometryczne.Model
 
         public Vector3 CenterPoint
         {
-            get { return _centerPoint; }
+            get { return VBOHelpers.ConvertFromOpenGLSpace(_centerPoint); }
             set
             {
-                //TODO: Dodać metode do zmieniania ce 
-                _centerPoint = value;
-                //if (_cutterIsSphercal)
-                //{
-                //    shape1 = new CutterSphere(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
-                //    shape2 = new CutterCylinder(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
 
+                _centerPoint = VBOHelpers.ConvertToOpenGLSpace(value);
 
-                //}
-                //else
-                //{
-                //    shape1 = new CutterSphere(CenterPoint, CutterDiameter / 2);
-                //    shape2 = new CutterCylinder(CenterPoint, CutterDiameter / 2);
-                //}
-
-                shape1.CenterPoint = _centerPoint;
-                shape2.CenterPoint = _centerPoint;
-                //OnLoad();
 
                 OnUpdateFrame();
 
 
-                OnPropertyChanged(nameof(CenterPoint));
+                // OnPropertyChanged(nameof(CenterPoint));
                 Refresh();
             }
-            
-    }
+
+        }
 
         // private int _cutterDiameter=20;
 
@@ -107,21 +92,21 @@ namespace ModelowanieGeometryczne.Model
 
                 if (_cutterIsSphercal)
                 {
-                    shape1 = new CutterSphere(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
-                    shape2 = new CutterCylinder(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+                    shape1 = new CutterSphere(_centerPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+                    shape2 = new CutterCylinder(_centerPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
 
 
                 }
                 else
                 {
-                    shape1 = new CutterSphere(CenterPoint, CutterDiameter / 2);
-                    shape2 = new CutterCylinder(CenterPoint, CutterDiameter / 2);
+                    shape1 = new CutterSphere(_centerPoint, CutterDiameter / 2);
+                    shape2 = new CutterCylinder(_centerPoint, CutterDiameter / 2);
                 }
 
                 OnLoad();
 
                 OnUpdateFrame();
-                OnPropertyChanged(nameof(CutterIsSpherical));
+                // OnPropertyChanged(nameof(CutterIsSpherical));
                 Refresh();
 
             }
@@ -138,15 +123,15 @@ namespace ModelowanieGeometryczne.Model
                 _cutterDiameter = value;
                 if (_cutterIsSphercal)
                 {
-                    shape1 = new CutterSphere(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
-                    shape2 = new CutterCylinder(CenterPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+                    shape1 = new CutterSphere(_centerPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
+                    shape2 = new CutterCylinder(_centerPoint + new Vector3(0, CutterDiameter / 2, 0), CutterDiameter / 2);
 
 
                 }
                 else
                 {
-                    shape1 = new CutterSphere(CenterPoint, CutterDiameter / 2);
-                    shape2 = new CutterCylinder(CenterPoint, CutterDiameter / 2);
+                    shape1 = new CutterSphere(_centerPoint, CutterDiameter / 2);
+                    shape2 = new CutterCylinder(_centerPoint, CutterDiameter / 2);
                 }
 
                 OnPropertyChanged(nameof(CutterDiameter));
@@ -154,13 +139,30 @@ namespace ModelowanieGeometryczne.Model
 
             }
         }
+
         public void OnUpdateFrame()
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo1.VertexBufferID);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo2.VertexBufferID);
+
+
+            if (_cutterIsSphercal)
+            {
+                var SphericalCutterRadius = new Vector3(0, CutterDiameter / 2, 0);
+                shape1.CenterPoint = _centerPoint + SphericalCutterRadius;
+                shape2.CenterPoint = _centerPoint + SphericalCutterRadius;
+
+
+            }
+            else
+            {
+                shape1.CenterPoint = _centerPoint;
+                shape2.CenterPoint = _centerPoint;
+            }
+
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(shape1.Vertices.Length * Vector3.SizeInBytes),
                 shape1.Vertices, BufferUsageHint.DynamicDraw);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo2.VertexBufferID);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(shape2.Vertices.Length * Vector3.SizeInBytes),
                 shape2.Vertices, BufferUsageHint.DynamicDraw);
         }

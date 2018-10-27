@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Examples.Shapes;
@@ -18,12 +20,16 @@ using WpfApp1;
 
 public class MillingSimulator : ViewModelBase
 {
+    //  private Stopwatch stopWatch;
     public MillingSimulator()
     {
-        _cutter = new Cutter(ToolCenterPositionCoordinates);
+        //  stopWatch = new Stopwatch();
+        //  stopWatch.Start();
+        _cutter = new Cutter(VBOHelpers.ConvertToOpenGLSpace(ToolCenterPositionCoordinates));
     }
-    Vector3 ToolCenterPositionCoordinates=new Vector3(0,100,0);
+    Vector3 ToolCenterPositionCoordinates = new Vector3(0 ,0, 100);
     Cutter _cutter;// = new Cutter(ToolCenterPositionCoordinates);
+
 
     public Cutter Cutter1
     {
@@ -55,10 +61,10 @@ public class MillingSimulator : ViewModelBase
 
     public void OnUpdateFrame()
     {
-        Material1.OnUpdateFrame();
-        Cutter1.OnUpdateFrame();
+        //Material1.OnUpdateFrame();
+        //Cutter1.OnUpdateFrame();
     }
-    
+
     private double counter = 0;
     private double scale = 0.01;
 
@@ -96,7 +102,7 @@ public class MillingSimulator : ViewModelBase
 
     private FileReader _fileReader = new FileReader();
 
-    private ObservableCollection<LinearMillingMove> _movesList;
+    private ObservableCollection<LinearMillingMove> _movesList=new ObservableCollection<LinearMillingMove>();
 
     public ObservableCollection<LinearMillingMove> MovesList
     {
@@ -113,7 +119,7 @@ public class MillingSimulator : ViewModelBase
         op.Title = "Open";
         if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
-            MovesList=_fileReader.ParseGCode(op.FileName);
+            MovesList = _fileReader.ParseGCode(op.FileName);
         }
 
         Cutter1.CutterIsSpherical = _fileReader.CutterIsSpherical;
@@ -121,21 +127,69 @@ public class MillingSimulator : ViewModelBase
 
     }
 
+    private DispatcherTimer timer;
     public void StartSimulation()
     {
 
-        var timer = new DispatcherTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(30);
-        timer.Tick += TimerOnTick;
-        timer.Start();
+        ////debug
+        //timer = new DispatcherTimer();
+        //timer.Interval = TimeSpan.FromMilliseconds(30);
+        //timer.Tick += TimerOnTick;
+        //timer.Start();
+
+        
     }
+
 
     private void TimerOnTick(object sender, EventArgs e)
     {
+        // stopWatch.Stop();
+        //MessageBox.Show(stopWatch.ElapsedMilliseconds.ToString());
         ToolCenterPositionCoordinates.Y += 1f;
+
+        //  stopWatch=new Stopwatch();
+        //  stopWatch.Start();
         Cutter1.CenterPoint = ToolCenterPositionCoordinates;
         //Cutter1.Draw();
+
     }
 
+    public double CutterDiameter = 50;
 
+    public void SimulationResult()
+    {
+        //if (MovesList.Any())
+        //{
+        //    MessageBox.Show("nie pusto");
+        //}
+        //else
+        //{
+        //    MessageBox.Show("pusto");
+
+        //}
+        Cutter1.CenterPoint = ToolCenterPositionCoordinates + new Vector3(0,0,100);
+        //Material1.Cut(startPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(0, 0, 40f)), endPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(50, 2, 20f)), diameter:CutterDiameter, isSpherical:_cutterIsSphercal);
+        Material1.Cut(new Vector3(0, 0, 40f), new Vector3(50, 50, 70f), diameter:CutterDiameter, isSpherical:_cutterIsSphercal);
+       // Material1.Cut(startPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(-3, -2, 0.1f)), endPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(3, 2, 0.1f)), diameter:CutterDiameter, isSpherical:false);
+        //Material1.Cut(startPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(-3, -1, 0.1f)), endPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(3, 3, 0.1f)), diameter:CutterDiameter, isSpherical:false);
+
+    }
+
+    private bool _cutterIsSphercal = false;
+
+    public bool CutterIsSpherical
+    {
+        get { return _cutterIsSphercal; }
+        set
+        {
+            _cutterIsSphercal = value;
+            Cutter1.CutterIsSpherical = _cutterIsSphercal;
+
+            
+            OnUpdateFrame();
+            OnPropertyChanged(nameof(CutterIsSpherical));
+        
+
+        }
+    }
 }

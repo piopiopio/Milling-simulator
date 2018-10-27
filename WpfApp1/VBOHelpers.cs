@@ -144,6 +144,18 @@ namespace WpfApp1
             return vbo;
         }
 
+        public static Vector3 ConvertToOpenGLSpace(Vector3 temp)
+        {//TODO: Zmienić ustawienie światła i swiatła tak zeby podawac od razu dobre wspolrzedne bez przeliczania
+
+            return new Vector3(temp.X, temp.Z, -temp.Y);
+        }
+
+        public static Vector3 ConvertFromOpenGLSpace(Vector3 temp)
+        {//TODO: Zmienić ustawienie światła i swiatła tak zeby podawac od razu dobre wspolrzedne bez przeliczania
+
+            return new Vector3(temp.X, -temp.Z, temp.Y);
+        }
+
 
         public static void Draw(VBOHelpers.Vbo vboT, String Mode)
         {//Mode decide if quads or quadsStrip

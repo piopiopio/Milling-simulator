@@ -24,7 +24,7 @@ namespace Examples.Shapes2
             }
         }
 
-        float _radius = 80;
+        float _radius;
 
         public float Radius
         {
@@ -32,6 +32,7 @@ namespace Examples.Shapes2
             set
             {
                 _radius = value;
+                CreateCylinder(out indices);
                 RefreshVertices();
             }
         }
@@ -59,6 +60,7 @@ namespace Examples.Shapes2
 
             for (int i = 0; i < Vertices.Length; i++)
             {
+                
                 Vertices[i] = vertices[i] + CenterPoint;
             }
 
@@ -67,7 +69,7 @@ namespace Examples.Shapes2
 
         private List<Vector3> CreateCylinder(out List<int> indices)
         {
-            var vertices = new List<Vector3>();
+            vertices = new List<Vector3>();
             for (double y = 0; y < 2; y++)
                 for (double x = 0; x < CylinderDivisions; x++)
                 {
@@ -92,6 +94,10 @@ namespace Examples.Shapes2
                 indices.Add(x + 1);
                 indices.Add(x);
             }
+
+            Vertices = vertices.ToArray();
+            Indices = indices.ToArray();
+
             return vertices;
         }
         public CutterCylinder(Vector3 centerPosition, float radius)
@@ -103,9 +109,8 @@ namespace Examples.Shapes2
             //depth_of_single_cube = MaterialDepth / Pieces;
 
             //Vertices = new Vector3[Pieces * Pieces * 8 * 3];
-            vertices = CreateCylinder(out indices);
-            Vertices = vertices.ToArray();
-            Indices = indices.ToArray();
+            CreateCylinder(out indices);
+
             RefreshVertices();
 
             //RandomHeigts();

@@ -100,8 +100,8 @@ namespace WpfApp1
             //  GL.LoadIdentity();
             //  GL.MatrixMode(MatrixMode.Projection);
             //    GL.LoadIdentity();
-            var halfWidth = glControl.Width / 2;
-            var halfHeight = (float)(glControl.Height / 2);
+            // var halfWidth = glControl.Width / 2;
+            //var halfHeight = (float)(glControl.Height / 2);
             //  GL.Ortho(-10, 10, 10, -10, 10, -10);
             GL.Viewport(0, 0, glControl.Size.Width, glControl.Size.Height);
             //double Scale = 5;
@@ -165,6 +165,9 @@ namespace WpfApp1
         private double _teta;
         private double _alphaX, _alphaY, _alphaZ;
 
+
+
+
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var temp = e.GetPosition(this);
@@ -226,6 +229,20 @@ namespace WpfApp1
         private void StartSimulation_OnClick(object sender, RoutedEventArgs e)
         {
             MainViewModel1.MillingSimulator1.StartSimulation();
+        }
+
+        private void DefaultView_OnClick(object sender, RoutedEventArgs e)
+        {
+            _alphaX = 0;
+            _alphaY = 0;
+            _alphaZ = 0;
+
+            glControl.Invalidate();
+        }
+
+        private void SimulationResult_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainViewModel1.MillingSimulator1.SimulationResult();
         }
     }
 
