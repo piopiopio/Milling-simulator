@@ -66,7 +66,7 @@ namespace WpfApp1
             }
             CutterDiameter = Int32.Parse(fileExtension.Substring(1));
 
-            MessageBox.Show(CutterIsSpherical + "  " + CutterDiameter);
+            //MessageBox.Show(CutterIsSpherical + "  " + CutterDiameter);
             PointsList = LoadGCode(opFileName);
             return PointsList;
         }
@@ -82,7 +82,7 @@ namespace WpfApp1
 
             int index = lines.IndexOf(lines.First(line => line.Contains("X") || line.Contains("Y") || line.Contains("Z")));
             string tempCommandID;
-            Vector3d tempPoint = new Vector3d(0, 0, 0);
+            Vector3 tempPoint = new Vector3(0, 0, 0);
 
             foreach (var item in lines)
             {
@@ -94,19 +94,19 @@ namespace WpfApp1
                 var tempX = Regex.Match(item, "[X][-]?[0-9]*[.][0-9]*").Value;
                 if (tempX.Length > 0)
                 {
-                    tempPoint.X = double.Parse(tempX.Substring(1));
+                    tempPoint.X = float.Parse(tempX.Substring(1));
                 }
 
                 var tempY = Regex.Match(item, "[Y][-]?[0-9]*[.][0-9]*").Value;
                 if (tempY.Length > 0)
                 {
-                    tempPoint.Y = double.Parse(tempY.Substring(1));
+                    tempPoint.Y = float.Parse(tempY.Substring(1));
                 }
 
                 var tempZ = Regex.Match(item, "[Z][-]?[0-9]*[.][0-9]*").Value;
                 if (tempZ.Length > 0)
                 {
-                    tempPoint.Z = double.Parse(tempZ.Substring(1));
+                    tempPoint.Z = float.Parse(tempZ.Substring(1));
                 }
 
 

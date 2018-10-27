@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -75,6 +76,7 @@ namespace WpfApp1
                 _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
                 OnLoad();
                 OnPropertyChanged(nameof(MaterialHeight));
+                Refresh();
             }
         }
 
@@ -114,94 +116,119 @@ namespace WpfApp1
 
         }
 
+        public void ApplyChanges()
+        {
+            Shape0.RefreshVertices();
+            OnUpdateFrame();
+            
+        }
+
+        public event PropertyChangedEventHandler RefreshScene;
+
+        private void Refresh()
+        {
+            //BusyEllipseLed = 1;
+            if (RefreshScene != null)
+                RefreshScene(this, new PropertyChangedEventArgs("RefreshScene"));
+            //BusyEllipseLed = 0;
+        }
+        double xc;
+        public Vector3 ConvertToVoxelCoordinates(Vector3 input)
+        {
+            var temp = new Vector3();
+            xc = _divisions / _materialWidth;
+            var yc = _divisions / _materialDepth;
+            temp.X = (int)Math.Floor(input.X * xc + _divisions / 2);
+            temp.Y = (int)Math.Floor(input.Y * yc + _divisions / 2);
+            temp.Z = input.Z;
+            return temp;
+
+
+        }
         public void Cut(Vector3 startPoint, Vector3 endPoint, double diameter, bool isSpherical)
         {
-            //TODO: zrobić dla roznych wartosci materialwidth, materialdepth i divisions teraz wszystkie musza byc takie same!!!   
-            //var singleCubeWidth = _materialWidth / _divisions;
-            //var singleCubeDepth = _materialDepth / _divisions;
 
-            // Shape0.heightArray[(int)Math.Round(startPoint.X+_divisions/2,0), (int)Math.Round(-startPoint.Z+_divisions / 2, 0)] = startPoint.Y;
+            var startPointConverted = ConvertToVoxelCoordinates(startPoint);
+            var endPointConverted = ConvertToVoxelCoordinates(endPoint);
+
+            var a = BresenhamLine((int)startPointConverted.X, (int)startPointConverted.Y, (int)endPointConverted.X, (int)endPointConverted.Y, true);
+
+            float tempheight = startPoint.Z;
+
+            float delta = (endPoint.Z - startPoint.Z) / (a.Count);
 
 
-            //   OnLoad();
+            for (int i = 0; i < a.Count; i++)
+            {
 
-            //Circle(
-            //        (int)Math.Round(startPoint.X + _divisions / 2, 0),
-            //        (int)Math.Round(-startPoint.Z + _divisions / 2, 0),
-            //        (float)Math.Round(startPoint.Y, 0),
-            //        (int)diameter / 2,
-            //    isSpherical);
+                Circle(
+                    a[i].Item1,
+                    a[i].Item2,
+                    tempheight,
+                    (int)(xc*diameter / 2),
+                    isSpherical);
+
+
+                tempheight += delta;
+            }
+
 
             //Circle(
             //    (int)Math.Round(endPoint.X + _divisions / 2, 0),
-            //    (int)Math.Round(-endPoint.Z + _divisions / 2, 0),
-            //    (float)Math.Round(endPoint.Y, 0),
+            //    (int)Math.Round(endPoint.Y + _divisions / 2, 0),
+            //    (float)Math.Round(endPoint.Z, 0),
             //    (int)diameter / 2,
             //    isSpherical);
-
-
-            Circle(
-                (int)Math.Round(startPoint.X + _divisions / 2, 0),
-                (int)Math.Round(startPoint.Y + _divisions / 2, 0),
-                (float)Math.Round(startPoint.Z, 0),
-                (int)diameter / 2,
-                isSpherical);
-
-            Circle(
-                (int)Math.Round(endPoint.X + _divisions / 2, 0),
-                (int)Math.Round(endPoint.Y + _divisions / 2, 0),
-                (float)Math.Round(endPoint.Z, 0),
-                (int)diameter / 2,
-                isSpherical);
 
 
             //Circle((int) Math.Round(endPoint.X + _divisions / 2, 0), (int)Math.Round(-endPoint.Z + _divisions / 2, 0), (int)diameter/2);
 
             // 
-            Fullfilment(startPoint, endPoint, diameter, isSpherical);
+            //Fullfilment(startPoint, endPoint, diameter, isSpherical);
 
             //foreach (var point in Line)
             //{
             //    if (Shape0.heightArray.GetLength(0) > point.Item1 && Shape0.heightArray.GetLength(1) > point.Item2 && point.Item1 >= 0 && point.Item2 >= 0) Shape0.heightArray[point.Item1, point.Item2] =100;
             //}
 
-            Shape0.RefreshVertices();
-            OnUpdateFrame();
+           // Shape0.RefreshVertices();
+            //OnUpdateFrame();
 
         }
+        
         List<Tuple<int, int>> Line = new List<Tuple<int, int>>();
 
-        private void Fullfilment(Vector3 startPoint, Vector3 endPoint, double diameter, bool isSpherical)
-        {
-            double radius = diameter / 2;
-            Vector3 direction = endPoint - startPoint;
-            var by = (float)Math.Sqrt(radius * radius * direction.X * direction.X /
-                                       (direction.X * direction.X + direction.Y * direction.Y));
-            float bx;
-            if (direction.X != 0)
-            {
-                bx = -direction.Y * by / direction.X;
-            }
-            else if (direction.Y != 0)
-            {
-                bx = (float)radius;
-            }
-            else
-            {
-                bx = 0;
-            }
+        //private void Fullfilment(Vector3 startPoint, Vector3 endPoint, double diameter, bool isSpherical)
+        //{
+        //    double radius = diameter / 2;
+        //    Vector3 direction = endPoint - startPoint;
+        //    var by = (float)Math.Sqrt(radius * radius * direction.X * direction.X /
+        //                               (direction.X * direction.X + direction.Y * direction.Y));
+        //    float bx;
+        //    if (direction.X != 0)
+        //    {
+        //        bx = -direction.Y * by / direction.X;
+        //    }
+        //    else if (direction.Y != 0)
+        //    {
+        //        bx = (float)radius;
+        //    }
+        //    else
+        //    {
+        //        bx = 0;
+        //    }
 
-            Vector3 perpendicularToDirection = new Vector3(bx, by, 0);
+        //    Vector3 perpendicularToDirection = new Vector3(bx, by, 0);
 
 
-            var startsPointsList = BresenhamLine((int)Math.Round(startPoint.X + _divisions / 2 - bx, 0), (int)Math.Round(startPoint.Y + _divisions / 2 - by, 0), (int)Math.Round(startPoint.X + _divisions / 2 + bx, 0), (int)Math.Round(startPoint.Y + _divisions / 2 + by, 0), false);
+        //    var startsPointsList = BresenhamLine((int)Math.Round(startPoint.X + _divisions / 2 - bx, 0), (int)Math.Round(startPoint.Y + _divisions / 2 - by, 0), (int)Math.Round(startPoint.X + _divisions / 2 + bx, 0), (int)Math.Round(startPoint.Y + _divisions / 2 + by, 0), false);
 
-            foreach (var item in startsPointsList)
-            {
-                BresenhamLine(item.Item1, item.Item2, (int)(item.Item1 + direction.X), (int)(item.Item2 + direction.Y), true);
-            }
+        //    foreach (var item in startsPointsList)
+        //    {
+        //        BresenhamLine(item.Item1, item.Item2, (int)(item.Item1 + direction.X), (int)(item.Item2 + direction.Y), true);
+        //    }
 
-        }
+        //}
         private void Circle(int x1, int y1, float z1, int radius, bool isSpherical)
         {//radius in cubes (pixels)
             List<Tuple<int, int, float>> Temp = new List<Tuple<int, int, float>>();
@@ -219,7 +246,7 @@ namespace WpfApp1
                         if (isSpherical)
                         {
                             float height = (float)-Math.Sqrt(radius * radius - i * i - j * j);
-                            Temp.Add(new Tuple<int, int, float>(i + x1, j + y1, height + z1));
+                            Temp.Add(new Tuple<int, int, float>(i + x1, j + y1, height + z1+radius));
                         }
                         else
                         {
@@ -230,17 +257,9 @@ namespace WpfApp1
             }
 
 
-            //foreach (var item in Temp)
-            //{
-            //    Line.Add(new Tuple<int, int>(x1+item.Item1, y1+item.Item2));
-            //}
-
-
-
 
             foreach (var point in Temp)
             {
-                //Line.Add(new Tuple<int, int>(x1 + point.Item1, y1 + point.Item2));
                 if (Shape0.heightArray.GetLength(0) > point.Item1 && Shape0.heightArray.GetLength(1) > point.Item2 && point.Item1 >= 0 && point.Item2 >= 0) Shape0.ModifyHeightArray(point.Item1, point.Item2, point.Item3);
             }
 
@@ -299,27 +318,13 @@ namespace WpfApp1
             }
 
 
-            if (modifiedBresenhamAlghorithm)
-            {
-                float tempheight= Shape0.heightArray[Line[0].Item1, Line[0].Item2];
-
-                float delta = (Shape0.heightArray[Line[Line.Count-1].Item1, Line[Line.Count-1].Item2] - Shape0.heightArray[Line[0].Item1, Line[0].Item2])  / (Line.Count - 2);
-
-
-                for (int i = 0; i < Line.Count; i++)
-                {
-
-
-                    if (Shape0.heightArray.GetLength(0) > Line[i].Item1 &&
-                        Shape0.heightArray.GetLength(1) > Line[i].Item2 && Line[i].Item1 >= 0 && Line[i].Item2 >= 0)
-
-                    {
-                        Shape0.ModifyHeightArray(Line[i].Item1, Line[i].Item2, tempheight+i*delta);
-                    }
-                }
-            }
 
             return Line;
+        }
+
+        public void Reset()
+        {
+            MaterialHeight = _materialHeight;
         }
     }
 }

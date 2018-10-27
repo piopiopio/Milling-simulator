@@ -27,7 +27,7 @@ public class MillingSimulator : ViewModelBase
         //  stopWatch.Start();
         _cutter = new Cutter(VBOHelpers.ConvertToOpenGLSpace(ToolCenterPositionCoordinates));
     }
-    Vector3 ToolCenterPositionCoordinates = new Vector3(0 ,0, 100);
+    Vector3 ToolCenterPositionCoordinates = new Vector3(0 ,0, 80);
     Cutter _cutter;// = new Cutter(ToolCenterPositionCoordinates);
 
 
@@ -122,8 +122,8 @@ public class MillingSimulator : ViewModelBase
             MovesList = _fileReader.ParseGCode(op.FileName);
         }
 
-        Cutter1.CutterIsSpherical = _fileReader.CutterIsSpherical;
-        Cutter1.CutterDiameter = _fileReader.CutterDiameter;
+        CutterIsSpherical = _fileReader.CutterIsSpherical;
+        CutterDiameter = _fileReader.CutterDiameter;
 
     }
 
@@ -136,8 +136,8 @@ public class MillingSimulator : ViewModelBase
         //timer.Interval = TimeSpan.FromMilliseconds(30);
         //timer.Tick += TimerOnTick;
         //timer.Start();
+        Cutter1.CenterPoint = new Vector3(100,0,0);
 
-        
     }
 
 
@@ -154,25 +154,28 @@ public class MillingSimulator : ViewModelBase
 
     }
 
-    public double CutterDiameter = 50;
+    private float _cutterDiameter = 20;
+    public float CutterDiameter
+    {
+        get { return _cutterDiameter; }
+        set
+        {
+            _cutterDiameter = value;
+            Cutter1.CutterDiameter = value;
+            OnPropertyChanged(nameof(CutterDiameter));
+        }
+    }
 
     public void SimulationResult()
     {
-        //if (MovesList.Any())
-        //{
-        //    MessageBox.Show("nie pusto");
-        //}
-        //else
-        //{
-        //    MessageBox.Show("pusto");
-
-        //}
-        Cutter1.CenterPoint = ToolCenterPositionCoordinates + new Vector3(0,0,100);
-        //Material1.Cut(startPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(0, 0, 40f)), endPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(50, 2, 20f)), diameter:CutterDiameter, isSpherical:_cutterIsSphercal);
-        Material1.Cut(new Vector3(0, 0, 40f), new Vector3(50, 50, 70f), diameter:CutterDiameter, isSpherical:_cutterIsSphercal);
-       // Material1.Cut(startPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(-3, -2, 0.1f)), endPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(3, 2, 0.1f)), diameter:CutterDiameter, isSpherical:false);
-        //Material1.Cut(startPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(-3, -1, 0.1f)), endPoint:VBOHelpers.ConvertToOpenGLSpace(new Vector3(3, 3, 0.1f)), diameter:CutterDiameter, isSpherical:false);
-
+        foreach (var item in _movesList)
+        {
+            Material1.Cut(ToolCenterPositionCoordinates, item._moveToPoint, diameter: CutterDiameter, isSpherical: _cutterIsSphercal);
+            ToolCenterPositionCoordinates = item._moveToPoint;
+          // 
+        }
+        Cutter1.CenterPoint = ToolCenterPositionCoordinates;
+        Material1.ApplyChanges();
     }
 
     private bool _cutterIsSphercal = false;
@@ -191,5 +194,10 @@ public class MillingSimulator : ViewModelBase
         
 
         }
+    }
+
+    public void ResetMaterial()
+    {
+        Material1.Reset();
     }
 }

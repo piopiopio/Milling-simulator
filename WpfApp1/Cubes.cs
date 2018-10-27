@@ -48,30 +48,30 @@ namespace Examples.Shapes
                 for (int j = 0; j < _divisions; j++)
                 {
 
-                    Vertices[i * 24 + j * 24 * _divisions + 0] = new Vector3(-c + a, heightArray[i, j], d + b);
-                    Vertices[i * 24 + j * 24 * _divisions + 1] = new Vector3(c + a, heightArray[i, j], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 0] = new Vector3(-c + a, heightArray[ j,i], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 1] = new Vector3(c + a, heightArray[ j,i], d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 2] = new Vector3(c + a, 0, d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 3] = new Vector3(-c + a, 0, d + b);
-                    Vertices[i * 24 + j * 24 * _divisions + 4] = new Vector3(-c + a, heightArray[i, j], -d + b);
-                    Vertices[i * 24 + j * 24 * _divisions + 5] = new Vector3(c + a, heightArray[i, j], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 4] = new Vector3(-c + a, heightArray[ j,i], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 5] = new Vector3(c + a, heightArray[ j,i], -d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 6] = new Vector3(c + a, 0, -d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 7] = new Vector3(-c + a, 0, -d + b);
 
-                    Vertices[i * 24 + j * 24 * _divisions + 0 + 8] = new Vector3(-c + a, heightArray[i, j], d + b);
-                    Vertices[i * 24 + j * 24 * _divisions + 1 + 8] = new Vector3(c + a, heightArray[i, j], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 0 + 8] = new Vector3(-c + a, heightArray[ j,i], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 1 + 8] = new Vector3(c + a, heightArray[ j,i], d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 2 + 8] = new Vector3(c + a, 0, d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 3 + 8] = new Vector3(-c + a, 0, d + b);
-                    Vertices[i * 24 + j * 24 * _divisions + 4 + 8] = new Vector3(-c + a, heightArray[i, j], -d + b);
-                    Vertices[i * 24 + j * 24 * _divisions + 5 + 8] = new Vector3(c + a, heightArray[i, j], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 4 + 8] = new Vector3(-c + a, heightArray[ j,i], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 5 + 8] = new Vector3(c + a, heightArray[ j,i], -d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 6 + 8] = new Vector3(c + a, 0, -d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 7 + 8] = new Vector3(-c + a, 0, -d + b);
 
-                    Vertices[i * 24 + j * 24 * _divisions + 0 + 16] = new Vector3(-c + a, heightArray[i, j], d + b);
-                    Vertices[i * 24 + j * 24 * _divisions + 1 + 16] = new Vector3(c + a, heightArray[i, j], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 0 + 16] = new Vector3(-c + a, heightArray[ j,i], d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 1 + 16] = new Vector3(c + a, heightArray[ j,i], d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 2 + 16] = new Vector3(c + a, 0, d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 3 + 16] = new Vector3(-c + a, 0, d + b);
-                    Vertices[i * 24 + j * 24 * _divisions + 4 + 16] = new Vector3(-c + a, heightArray[i, j], -d + b);
-                    Vertices[i * 24 + j * 24 * _divisions + 5 + 16] = new Vector3(c + a, heightArray[i, j], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 4 + 16] = new Vector3(-c + a, heightArray[ j,i], -d + b);
+                    Vertices[i * 24 + j * 24 * _divisions + 5 + 16] = new Vector3(c + a, heightArray[ j,i], -d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 6 + 16] = new Vector3(c + a, 0, -d + b);
                     Vertices[i * 24 + j * 24 * _divisions + 7 + 16] = new Vector3(-c + a, 0, -d + b);
                     a += width_of_single_cube;

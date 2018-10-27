@@ -50,23 +50,12 @@ namespace ModelowanieGeometryczne.Model
                 OnUpdateFrame();
 
 
-                // OnPropertyChanged(nameof(CenterPoint));
+                //OnPropertyChanged(nameof(CenterPoint));
                 Refresh();
             }
 
         }
 
-        // private int _cutterDiameter=20;
-
-        //public int CutterDiameter
-        //{
-        //    get { return _cutterDiameter; }
-        //    set
-        //    {
-        //        _cutterDiameter = value;
-        //        OnPropertyChanged(nameof(CutterDiameter));
-        //    }
-        //}
 
         private double _feedDepth;
 
@@ -134,6 +123,7 @@ namespace ModelowanieGeometryczne.Model
                     shape2 = new CutterCylinder(_centerPoint, CutterDiameter / 2);
                 }
 
+                OnUpdateFrame();
                 OnPropertyChanged(nameof(CutterDiameter));
                 Refresh();
 
@@ -142,8 +132,6 @@ namespace ModelowanieGeometryczne.Model
 
         public void OnUpdateFrame()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo1.VertexBufferID);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo2.VertexBufferID);
 
 
             if (_cutterIsSphercal)
@@ -160,9 +148,11 @@ namespace ModelowanieGeometryczne.Model
                 shape2.CenterPoint = _centerPoint;
             }
 
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo1.VertexBufferID);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(shape1.Vertices.Length * Vector3.SizeInBytes),
                 shape1.Vertices, BufferUsageHint.DynamicDraw);
 
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo2.VertexBufferID);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(shape2.Vertices.Length * Vector3.SizeInBytes),
                 shape2.Vertices, BufferUsageHint.DynamicDraw);
         }

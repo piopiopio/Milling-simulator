@@ -7,7 +7,7 @@ namespace ModelowanieGeometryczne.Helpers
 {
     public class LinearMillingMove: ViewModelBase
     {
-        private Vector3d _moveToPoint;
+        public Vector3 _moveToPoint;
         
         
 
@@ -30,7 +30,7 @@ namespace ModelowanieGeometryczne.Helpers
         public string LinearMoveCommandNumber { get; set; }
 
 
-        public LinearMillingMove(Vector3d moveToPoint,int lineNumber, string linearMoveCommandNumber)
+        public LinearMillingMove(Vector3 moveToPoint,int lineNumber, string linearMoveCommandNumber)
         {
             _moveToPoint = moveToPoint;
             LineNumber = lineNumber;

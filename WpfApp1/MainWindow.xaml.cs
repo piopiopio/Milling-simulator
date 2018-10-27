@@ -59,6 +59,7 @@ namespace WpfApp1
 
 
             MainViewModel1.MillingSimulator1.Cutter1.RefreshScene += Scene_RefreshScene;
+            MainViewModel1.MillingSimulator1.Material1.RefreshScene += Scene_RefreshScene;
         }
 
         #endregion
@@ -243,6 +244,11 @@ namespace WpfApp1
         private void SimulationResult_OnClick(object sender, RoutedEventArgs e)
         {
             MainViewModel1.MillingSimulator1.SimulationResult();
+        }
+
+        private void ResetMaterial_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainViewModel1.MillingSimulator1.ResetMaterial();
         }
     }
 
