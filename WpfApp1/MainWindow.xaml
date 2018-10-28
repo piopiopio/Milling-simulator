@@ -59,14 +59,16 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
 
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Content="Load file" Click="LoadPath_OnClick"></Button>
                 <Button Grid.Column="1" Content="Start simulation" Name="StartSimulation" Click="StartSimulation_OnClick"></Button>
-                <Button Grid.Column="2" Content="Simulation result" Name="SimulationResult" Click="SimulationResult_OnClick"></Button>
-                <Button Grid.Column="3" Content="Default view" Name="DefaultView" Click="DefaultView_OnClick"></Button>
-                <Button Grid.Column="4" Content="Reset material" Name="ResetMaterial" Click="ResetMaterial_OnClick"></Button>
+                <Button Grid.Column="2" Content="Stop simulation" Name="StopSimulation" Click="StopSimulation_OnClick_imulation_OnClick"></Button>
+                <Button Grid.Column="3" Content="Simulation result" Name="SimulationResult" Click="SimulationResult_OnClick"></Button>
+                <Button Grid.Column="4" Content="Default view" Name="DefaultView" Click="DefaultView_OnClick"></Button>
+                <Button Grid.Column="5" Content="Reset material" Name="ResetMaterial" Click="ResetMaterial_OnClick"></Button>
                 <!--<Button Grid.Column="3"></Button>
                     <Button Grid.Column="4"></Button>
                     <Button Grid.Column="5"></Button>-->

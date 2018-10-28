@@ -261,6 +261,11 @@ namespace WpfApp1
         {
             MainViewModel1.MillingSimulator1.ResetMaterial();
         }
+
+        private void StopSimulation_OnClick_imulation_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainViewModel1.MillingSimulator1.StopSimulation();
+        }
     }
 
     #endregion

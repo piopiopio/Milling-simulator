@@ -160,7 +160,7 @@ public class MillingSimulator : ViewModelBase
     {
         if (_movesList.Any())
         {
-
+            StepNumber = 0;
             ////debug
             SimulationTemporaryList.Clear();
             //foreach (var item in _movesList)
@@ -176,7 +176,7 @@ public class MillingSimulator : ViewModelBase
             timer.Start();
             //Cutter1.CenterPoint = new Vector3(100, 0, 0);
 
-            StepNumber = 0;
+            
         }
     }
 
@@ -213,6 +213,15 @@ public class MillingSimulator : ViewModelBase
         else
         {
             timer.Stop();
+        }
+
+
+        if (stopSimulationFlag)
+        {
+            stopSimulationFlag = false;
+            timer.Stop();
+            ToolCenterPositionCoordinates = SimulationTemporaryList.Last()._moveToPoint;
+            Cutter1.CenterPoint = ToolCenterPositionCoordinates;
         }
     }
 
@@ -276,6 +285,9 @@ public class MillingSimulator : ViewModelBase
         }
     }
 
-
-
+    private bool stopSimulationFlag = false;
+    public void StopSimulation()
+    {
+        stopSimulationFlag = true;
+    }
 }
