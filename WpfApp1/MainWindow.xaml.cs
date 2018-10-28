@@ -41,19 +41,29 @@ namespace WpfApp1
             GL.LoadMatrix(ref mv);
 
 
+            //GL.Enable(EnableCap.DepthTest);
+            //GL.Enable(EnableCap.Lighting);
+            //GL.Enable(EnableCap.ColorMaterial);
+            //float[] light_position = { 0, 80, 0 };
+            //float[] light_diffuse = { 0.2f, 0.1f, 0.1f };
+            //float[] light_ambient = { 0.2f, 0.1f, 0.1f };
+            //float[] light_specular = { 0.2f, 0.1f, 0.1f };
+            //GL.Light(LightName.Light0, LightParameter.Position, light_position);
+            //GL.Light(LightName.Light0, LightParameter.Diffuse, light_diffuse);
+            //GL.Light(LightName.Light0, LightParameter.Ambient, light_ambient);
+            //GL.Light(LightName.Light0, LightParameter.Specular, light_specular);
 
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.ColorMaterial);
-            float[] light_position = { 0, 80, 0 };
-            float[] light_diffuse = { 0.2f, 0.1f, 0.1f };
+            float[] light_position = { 100, 500, 100 };
+            float[] light_diffuse = { 0.01f, 0.01f, 0.005f };
             float[] light_ambient = { 0.2f, 0.1f, 0.1f };
-            float[] light_specular = { 0.2f, 0.1f, 0.1f };
+            float[] light_specular = { 0.0f, 0.0f, 0.0f };
             GL.Light(LightName.Light0, LightParameter.Position, light_position);
             GL.Light(LightName.Light0, LightParameter.Diffuse, light_diffuse);
             GL.Light(LightName.Light0, LightParameter.Ambient, light_ambient);
             GL.Light(LightName.Light0, LightParameter.Specular, light_specular);
-
 
             GL.Enable(EnableCap.Light0);
 

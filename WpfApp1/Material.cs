@@ -8,6 +8,7 @@ using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Shell;
 using Examples.Shapes;
+using ModelowanieGeometryczne.Helpers;
 using ModelowanieGeometryczne.ViewModel;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -120,7 +121,7 @@ namespace WpfApp1
         {
             Shape0.RefreshVertices();
             OnUpdateFrame();
-            
+
         }
 
         public event PropertyChangedEventHandler RefreshScene;
@@ -145,18 +146,21 @@ namespace WpfApp1
 
 
         }
-        public void Cut(Vector3 startPoint, Vector3 endPoint, double diameter, bool isSpherical)
+
+        private int lastLineNumberWithError;
+        public void Cut(Vector3 startPoint, LinearMillingMove endPoint, double diameter, bool isSpherical)
         {
+            cutterInMaterial = false;
 
             var startPointConverted = ConvertToVoxelCoordinates(startPoint);
-            var endPointConverted = ConvertToVoxelCoordinates(endPoint);
+            var endPointConverted = ConvertToVoxelCoordinates(endPoint._moveToPoint);
 
             var a = BresenhamLine((int)startPointConverted.X, (int)startPointConverted.Y, (int)endPointConverted.X, (int)endPointConverted.Y, true);
 
             float tempheight = startPoint.Z;
 
-            float delta = (endPoint.Z - startPoint.Z) / (a.Count);
-
+            float delta = (endPoint._moveToPoint.Z - startPoint.Z) / (a.Count);
+            bool downCuttingError = false;
 
             for (int i = 0; i < a.Count; i++)
             {
@@ -165,13 +169,22 @@ namespace WpfApp1
                     a[i].Item1,
                     a[i].Item2,
                     tempheight,
-                    (int)(xc*diameter / 2),
+                    (int)(xc * diameter / 2),
                     isSpherical);
 
 
                 tempheight += delta;
+                if (cutterInMaterial && delta < -0.000001 && !isSpherical)
+                {
+                    downCuttingError = true;
+                }
             }
 
+            if (downCuttingError && lastLineNumberWithError!= endPoint.LineNumber)
+            {
+                lastLineNumberWithError = endPoint.LineNumber;
+                MessageBox.Show("Plain cutter is cutting down, line number: " + endPoint.LineNumber.ToString());
+            }
 
             //Circle(
             //    (int)Math.Round(endPoint.X + _divisions / 2, 0),
@@ -191,11 +204,11 @@ namespace WpfApp1
             //    if (Shape0.heightArray.GetLength(0) > point.Item1 && Shape0.heightArray.GetLength(1) > point.Item2 && point.Item1 >= 0 && point.Item2 >= 0) Shape0.heightArray[point.Item1, point.Item2] =100;
             //}
 
-           // Shape0.RefreshVertices();
+            // Shape0.RefreshVertices();
             //OnUpdateFrame();
 
         }
-        
+
         List<Tuple<int, int>> Line = new List<Tuple<int, int>>();
 
         //private void Fullfilment(Vector3 startPoint, Vector3 endPoint, double diameter, bool isSpherical)
@@ -229,6 +242,7 @@ namespace WpfApp1
         //    }
 
         //}
+        private bool cutterInMaterial = false;
         private void Circle(int x1, int y1, float z1, int radius, bool isSpherical)
         {//radius in cubes (pixels)
             List<Tuple<int, int, float>> Temp = new List<Tuple<int, int, float>>();
@@ -246,7 +260,7 @@ namespace WpfApp1
                         if (isSpherical)
                         {
                             float height = (float)-Math.Sqrt(radius * radius - i * i - j * j);
-                            Temp.Add(new Tuple<int, int, float>(i + x1, j + y1, height + z1+radius));
+                            Temp.Add(new Tuple<int, int, float>(i + x1, j + y1, height + z1 + radius));
                         }
                         else
                         {
@@ -260,7 +274,12 @@ namespace WpfApp1
 
             foreach (var point in Temp)
             {
-                if (Shape0.heightArray.GetLength(0) > point.Item1 && Shape0.heightArray.GetLength(1) > point.Item2 && point.Item1 >= 0 && point.Item2 >= 0) Shape0.ModifyHeightArray(point.Item1, point.Item2, point.Item3);
+                if (Shape0.heightArray.GetLength(0) > point.Item1 && Shape0.heightArray.GetLength(1) > point.Item2 &&
+                    point.Item1 >= 0 && point.Item2 >= 0)
+                {
+                    cutterInMaterial = Shape0.ModifyHeightArray(point.Item1, point.Item2, point.Item3);
+                }
+
             }
 
         }

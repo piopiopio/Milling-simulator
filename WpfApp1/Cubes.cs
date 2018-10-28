@@ -224,9 +224,15 @@ namespace Examples.Shapes
 
         }
 
-        public void ModifyHeightArray(int item1, int item2, float f)
-        {
-            if (heightArray[item1, item2] > f) heightArray[item1, item2] = f;
+        public bool ModifyHeightArray(int item1, int item2, float f)
+        {//Return if cutter is in material.
+            if (heightArray[item1, item2] > f)
+            {
+                heightArray[item1, item2] = f;
+                return true;
+            }
+
+            return false;
         }
     }
 }

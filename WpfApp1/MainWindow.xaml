@@ -39,6 +39,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
 
 
 
@@ -98,9 +99,10 @@
             <!--<Label Grid.Row="11" Content="Checkbox" Grid.ColumnSpan="2"></Label>
             <TextBox Grid.Column="2" Grid.Row="11" Text="{Binding MillingSimulator1.Cutter1.CutterIsSpherical}"></TextBox>-->
 
+            <Label Grid.Row="12" Content="Animation speed" Grid.ColumnSpan="2"></Label>
+            <Slider Grid.Row="12" Grid.Column="2" Name="AnimationSpeedSlider" Minimum="1" Maximum="100" Value="{ Binding MillingSimulator1.AnimationSpeed}"></Slider>
 
-
-            <ListView Grid.Row="12" Grid.ColumnSpan="3" ItemsSource="{Binding MillingSimulator1.MovesList}" Height="249" VerticalAlignment="Bottom" >
+            <ListView Grid.Row="13" Grid.ColumnSpan="3" ItemsSource="{Binding MillingSimulator1.MovesList}" Height="249" VerticalAlignment="Bottom" >
                 <!--<GridViewColumn Header="X" Width="60" DisplayMemberBinding="{Binding X, StringFormat=N2}"/>-->
                 <!--<GridViewColumn Header="Y" Width="60" DisplayMemberBinding="{Binding X, StringFormat=N2}"/>
                             <GridViewColumn Header="Z" Width="60" DisplayMemberBinding="{Binding X, StringFormat=N2}"/>-->
