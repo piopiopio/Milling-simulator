@@ -27,17 +27,17 @@ public class MillingSimulator : ViewModelBase
         //  stopWatch.Start();
         _cutter = new Cutter(VBOHelpers.ConvertToOpenGLSpace(ToolCenterPositionCoordinates));
     }
+
     Vector3 ToolCenterPositionCoordinates = new Vector3(0, 0, 80);
-    Cutter _cutter;// = new Cutter(ToolCenterPositionCoordinates);
+    Cutter _cutter; // = new Cutter(ToolCenterPositionCoordinates);
     private int _animationSpeed = 20;
+
     public int AnimationSpeed
     {
         get { return _animationSpeed; }
-        set
-        {
-            _animationSpeed = value;
-        }
+        set { _animationSpeed = value; }
     }
+
     public Cutter Cutter1
     {
         get { return _cutter; }
@@ -81,6 +81,8 @@ public class MillingSimulator : ViewModelBase
         set => scale = Math.Max(value, 0.0001);
     }
 
+    private Vector3? frozenCutterCeneterPointPosition;
+
     public void OnRenderFrame(double alphaX, double alphaY, double alphaZ)
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -105,6 +107,19 @@ public class MillingSimulator : ViewModelBase
 
         Material1.Draw();
         Cutter1.Draw();
+        if (frozenCutterCeneterPointPosition.HasValue && _showPath) {
+            GL.Begin(BeginMode.LineStrip);
+            GL.Color3(0.0, 1.0, 0.0);
+            GL.Vertex3(frozenCutterCeneterPointPosition.Value);
+            foreach (var item in _movesList)
+            {
+
+
+                GL.Vertex3(VBOHelpers.ConvertToOpenGLSpace(item._moveToPoint));
+            }
+
+            GL.End();
+        }
     }
 
     private FileReader _fileReader = new FileReader();
@@ -131,12 +146,14 @@ public class MillingSimulator : ViewModelBase
 
         CutterIsSpherical = _fileReader.CutterIsSpherical;
         CutterDiameter = _fileReader.CutterDiameter;
+        frozenCutterCeneterPointPosition = Cutter1._centerPoint;
 
+      
     }
 
     private DispatcherTimer timer;
     public int StepNumber = 0;
-    private List<LinearMillingMove> SimulationTemporaryList=new List<LinearMillingMove>();
+    private List<LinearMillingMove> SimulationTemporaryList = new List<LinearMillingMove>();
 
 
     public void StartSimulation()
@@ -146,12 +163,12 @@ public class MillingSimulator : ViewModelBase
 
             ////debug
             SimulationTemporaryList.Clear();
-            foreach (var item in _movesList)
-            {
-                SimulationTemporaryList.Add(item);
-            }
+            //foreach (var item in _movesList)
+            //{
+            //    SimulationTemporaryList.Add(item);
+            //}
 
-
+            SimulationTemporaryList = _movesList.ToList();
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(30);
@@ -176,20 +193,20 @@ public class MillingSimulator : ViewModelBase
         //Cutter1.Draw();
         while ((SimulationTemporaryList[StepNumber]._moveToPoint - ToolCenterPositionCoordinates).Length > AnimationSpeed)
         {
-            var tempVector=0.5f*(SimulationTemporaryList[StepNumber]._moveToPoint + ToolCenterPositionCoordinates);
-            var tempLinearMillingMove = new LinearMillingMove(tempVector, SimulationTemporaryList[StepNumber].LineNumber,SimulationTemporaryList[StepNumber].LinearMoveCommandNumber);
+            var tempVector = 0.5f * (SimulationTemporaryList[StepNumber]._moveToPoint + ToolCenterPositionCoordinates);
+            var tempLinearMillingMove = new LinearMillingMove(tempVector, SimulationTemporaryList[StepNumber].LineNumber, SimulationTemporaryList[StepNumber].LinearMoveCommandNumber);
 
             SimulationTemporaryList.Insert(StepNumber, tempLinearMillingMove);
         }
 
-            Material1.Cut(ToolCenterPositionCoordinates, SimulationTemporaryList[StepNumber], diameter: CutterDiameter, isSpherical: _cutterIsSphercal);
-            ToolCenterPositionCoordinates = SimulationTemporaryList[StepNumber]._moveToPoint;
-            
-        
+        Material1.Cut(ToolCenterPositionCoordinates, SimulationTemporaryList[StepNumber], diameter: CutterDiameter, isSpherical: _cutterIsSphercal);
+        ToolCenterPositionCoordinates = SimulationTemporaryList[StepNumber]._moveToPoint;
+
+
         Cutter1.CenterPoint = ToolCenterPositionCoordinates;
         Material1.ApplyChanges();
 
-        if (StepNumber < SimulationTemporaryList.Count-1)
+        if (StepNumber < SimulationTemporaryList.Count - 1)
         {
             StepNumber++;
         }
@@ -246,4 +263,19 @@ public class MillingSimulator : ViewModelBase
     {
         Material1.Reset();
     }
+
+    private bool _showPath=false;
+    public bool ShowPath
+    {
+        get { return _showPath; }
+        set
+        {
+            _showPath = value;
+            OnPropertyChanged(nameof(ShowPath));
+            Refresh();
+        }
+    }
+
+
+
 }

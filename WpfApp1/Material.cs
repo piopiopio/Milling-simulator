@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
@@ -23,6 +24,7 @@ namespace WpfApp1
             _materialHeight = 50;
             _materialDepth = 150;
             _divisions = 200;
+            _divisionsNew = _divisions;
             _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
         }
         private Cubes _shape0;
@@ -60,9 +62,9 @@ namespace WpfApp1
             set
             {
                 _materialWidth = value;
-                _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
-                OnLoad();
-                OnPropertyChanged(nameof(MaterialWidth));
+                //_shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
+               // OnLoad();
+               // OnPropertyChanged(nameof(MaterialWidth));
             }
         }
 
@@ -74,10 +76,10 @@ namespace WpfApp1
             set
             {
                 _materialHeight = value;
-                _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
-                OnLoad();
-                OnPropertyChanged(nameof(MaterialHeight));
-                Refresh();
+                //_shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
+                //OnLoad();
+                //OnPropertyChanged(nameof(MaterialHeight));
+                //Refresh();
             }
         }
 
@@ -90,24 +92,26 @@ namespace WpfApp1
             set
             {
                 _materialDepth = value;
-                _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
-                OnLoad();
-                OnPropertyChanged(nameof(MaterialDepth));
+                //_shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
+                //OnLoad();
+                //OnPropertyChanged(nameof(MaterialDepth));
             }
         }
 
 
         public int _divisions;
-
+        public int _divisionsNew;
+        private const int _maxDivisions = 1000;
         public int Divisions
         {
-            get { return _divisions; }
+            get { return _divisionsNew; }
             set
             {
-                _divisions = value;
-                _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
-                OnLoad();
-                OnPropertyChanged(nameof(Divisions));
+
+                _divisionsNew = Math.Min(value, _maxDivisions);
+                //_shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
+                //OnLoad();
+                //OnPropertyChanged(nameof(Divisions));
             }
         }
 
@@ -124,15 +128,15 @@ namespace WpfApp1
 
         }
 
-        public event PropertyChangedEventHandler RefreshScene;
+        //public event PropertyChangedEventHandler RefreshScene;
 
-        private void Refresh()
-        {
-            //BusyEllipseLed = 1;
-            if (RefreshScene != null)
-                RefreshScene(this, new PropertyChangedEventArgs("RefreshScene"));
-            //BusyEllipseLed = 0;
-        }
+        //private void Refresh()
+        //{
+        //    //BusyEllipseLed = 1;
+        //    if (RefreshScene != null)
+        //        RefreshScene(this, new PropertyChangedEventArgs("RefreshScene"));
+        //    //BusyEllipseLed = 0;
+        //}
         double xc;
         public Vector3 ConvertToVoxelCoordinates(Vector3 input)
         {
@@ -147,7 +151,19 @@ namespace WpfApp1
 
         }
 
-        private int lastLineNumberWithError;
+        private float _minimalHeight = 20;
+
+        public float MinimalHeight
+        {
+            get { return _minimalHeight; }
+            set
+            {
+                _minimalHeight = value;
+
+            }
+        }
+        private int lastLineNumberWithPlainCutterCutDownError;
+        private int lastLineNumberWithTooLowHeightDownError;
         public void Cut(Vector3 startPoint, LinearMillingMove endPoint, double diameter, bool isSpherical)
         {
             cutterInMaterial = false;
@@ -161,6 +177,7 @@ namespace WpfApp1
 
             float delta = (endPoint._moveToPoint.Z - startPoint.Z) / (a.Count);
             bool downCuttingError = false;
+            bool minimalHeightError = false;
 
             for (int i = 0; i < a.Count; i++)
             {
@@ -171,19 +188,31 @@ namespace WpfApp1
                     tempheight,
                     (int)(xc * diameter / 2),
                     isSpherical);
-
+                if (tempheight < _minimalHeight)
+                {
+                    minimalHeightError = true;
+                }
 
                 tempheight += delta;
+
                 if (cutterInMaterial && delta < -0.000001 && !isSpherical)
                 {
                     downCuttingError = true;
                 }
+
+
             }
 
-            if (downCuttingError && lastLineNumberWithError!= endPoint.LineNumber)
+            if (downCuttingError && lastLineNumberWithPlainCutterCutDownError != endPoint.LineNumber)
             {
-                lastLineNumberWithError = endPoint.LineNumber;
+                lastLineNumberWithPlainCutterCutDownError = endPoint.LineNumber;
                 MessageBox.Show("Plain cutter is cutting down, line number: " + endPoint.LineNumber.ToString());
+            }
+
+            if (minimalHeightError && lastLineNumberWithTooLowHeightDownError != endPoint.LineNumber)
+            {
+                lastLineNumberWithTooLowHeightDownError = endPoint.LineNumber;
+                MessageBox.Show("To low height, line number: " + endPoint.LineNumber.ToString());
             }
 
             //Circle(
@@ -343,7 +372,11 @@ namespace WpfApp1
 
         public void Reset()
         {
+            _divisions = _divisionsNew;
+            _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
+            OnLoad();
             MaterialHeight = _materialHeight;
+            Refresh();
         }
     }
 }

@@ -36,7 +36,7 @@ namespace ModelowanieGeometryczne.Model
         }
 
 
-        Vector3 _centerPoint;// = new Vector3(0, 100, 0);
+        public Vector3 _centerPoint;// = new Vector3(0, 100, 0);
 
         public Vector3 CenterPoint
         {
@@ -172,14 +172,14 @@ namespace ModelowanieGeometryczne.Model
 
 
 
-        public event PropertyChangedEventHandler RefreshScene;
+        //public event PropertyChangedEventHandler RefreshScene;
 
-        private void Refresh()
-        {
-            //BusyEllipseLed = 1;
-            if (RefreshScene != null)
-                RefreshScene(this, new PropertyChangedEventArgs("RefreshScene"));
-            //BusyEllipseLed = 0;
-        }
+        //private void Refresh()
+        //{
+        //    //BusyEllipseLed = 1;
+        //    if (RefreshScene != null)
+        //        RefreshScene(this, new PropertyChangedEventArgs("RefreshScene"));
+        //    //BusyEllipseLed = 0;
+        //}
     }
 }
