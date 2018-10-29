@@ -39,11 +39,13 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-     
+
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="19.5"/>
+                <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="82.5"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
@@ -66,30 +68,41 @@
                 <Button Grid.Column="0" Content="Load file" Click="LoadPath_OnClick"></Button>
                 <Button Grid.Column="1" Content="Start simulation" Name="StartSimulation" Click="StartSimulation_OnClick"></Button>
                 <Button Grid.Column="2" Content="Stop simulation" Name="StopSimulation" Click="StopSimulation_OnClick_imulation_OnClick"></Button>
-                <Button Grid.Column="3" Content="Simulation result" Name="SimulationResult" Click="SimulationResult_OnClick"></Button>
+                <Button Grid.Column="3" Content="Simulation result" Name="SimulationResult" Click="SimulationResult_OnClick" IsEnabled="{Binding MillingSimulator1.SimulationResultButtonIsEnabled}"></Button>
                 <Button Grid.Column="4" Content="Default view" Name="DefaultView" Click="DefaultView_OnClick"></Button>
                 <Button Grid.Column="5" Content="Reset material" Name="ResetMaterial" Click="ResetMaterial_OnClick"></Button>
                 <!--<Button Grid.Column="3"></Button>
                     <Button Grid.Column="4"></Button>
                     <Button Grid.Column="5"></Button>-->
             </Grid>
-            <Label  Grid.Row="4" Content="Material width" Grid.ColumnSpan="2"></Label>
+            <Label  Grid.Row="4" Content="Material width [mm]" Grid.ColumnSpan="2"  Background="DarkKhaki"></Label>
             <TextBox Grid.Column="2" Grid.Row="4" Text="{Binding MillingSimulator1.Material1.MaterialWidth}"></TextBox>
 
-            <Label Grid.Row="5" Content="Material depht" Grid.ColumnSpan="2"></Label>
+            <Label Grid.Row="5" Content="Material depht [mm]" Grid.ColumnSpan="2"  Background="DarkKhaki"></Label>
             <TextBox Grid.Column="2" Grid.Row="5" Text="{Binding MillingSimulator1.Material1.MaterialDepth}"></TextBox>
 
-            <Label Grid.Row="6" Content="Material height" Grid.ColumnSpan="2"></Label>
+            <Label Grid.Row="6" Content="Material height [mm]" Grid.ColumnSpan="2"  Background="DarkKhaki"></Label>
             <TextBox Grid.Column="2" Grid.Row="6" Text="{Binding MillingSimulator1.Material1.MaterialHeight}"></TextBox>
 
-            <Label Grid.Row="7" Content="Divisions number" Grid.ColumnSpan="2"></Label>
-            <TextBox Grid.Column="2" Grid.Row="7" Text="{Binding MillingSimulator1.Material1.Divisions}"></TextBox>
+            <Label Content="Grid accurcy [mm]"  Grid.Row="7" Grid.ColumnSpan="2"  Background="DarkKhaki"></Label>
+            <Grid Grid.Row="7" Grid.Column="2" HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding MillingSimulator1.Material1.Accuracy}" ></TextBox>
+                <Label Grid.Column="1" Content="{Binding MillingSimulator1.Material1.DivisionsString}" HorizontalAlignment="Right" HorizontalContentAlignment="Right"/>
+            </Grid>
 
-            <Label Grid.Row="8" Content="Spherical cutter" Grid.ColumnSpan="2"></Label>
-            <CheckBox Grid.Column="2" Grid.Row="8" IsChecked="{Binding MillingSimulator1.CutterIsSpherical, Mode=TwoWay}"></CheckBox>
+            <Label Grid.Row="8" Content="Minimum height [mm]" Grid.ColumnSpan="2" ></Label>
+            <TextBox Grid.Column="2" Grid.Row="8" Text="{Binding MillingSimulator1.Material1.MinimalHeight}"></TextBox>
 
-            <Label Grid.Row="9" Content="Cutter diameter" Grid.ColumnSpan="2"></Label>
-            <TextBox Grid.Column="2" Grid.Row="9" Text="{Binding MillingSimulator1.CutterDiameter}"></TextBox>
+
+            <Label Grid.Row="9" Content="Spherical cutter" Grid.ColumnSpan="2"></Label>
+            <CheckBox Grid.Column="2" Grid.Row="9" IsChecked="{Binding MillingSimulator1.CutterIsSpherical, Mode=TwoWay}"></CheckBox>
+
+            <Label Grid.Row="10" Content="Cutter diameter [mm]" Grid.ColumnSpan="2"></Label>
+            <TextBox Grid.Column="2" Grid.Row="10" Text="{Binding MillingSimulator1.CutterDiameter}"></TextBox>
 
             <!--<Label Grid.Row="10" Content="Feed depth" Grid.ColumnSpan="2"></Label>
             <TextBox Grid.Column="2" Grid.Row="10" Text="{Binding MillingSimulator1.Cutter1.FeedDepth}"></TextBox>-->
@@ -97,13 +110,16 @@
             <!--<Label Grid.Row="11" Content="Checkbox" Grid.ColumnSpan="2"></Label>
             <TextBox Grid.Column="2" Grid.Row="11" Text="{Binding MillingSimulator1.Cutter1.CutterIsSpherical}"></TextBox>-->
 
-            <Label Grid.Row="10" Content="Animation speed" Grid.ColumnSpan="2"></Label>
-            <Slider Grid.Row="10" Grid.Column="2" Name="AnimationSpeedSlider" Minimum="1" Maximum="100" Value="{ Binding MillingSimulator1.AnimationSpeed}"></Slider>
+            <Label Grid.Row="11" Content="Animation speed" Grid.ColumnSpan="2"></Label>
+            <Slider Grid.Row="11" Grid.Column="2" Name="AnimationSpeedSlider" Minimum="1" Maximum="100" Value="{ Binding MillingSimulator1.AnimationSpeed}"></Slider>
 
-            <Label Grid.Row="11" Content="Show path" Grid.ColumnSpan="2"></Label>
-            <CheckBox Grid.Column="2" Grid.Row="11" IsChecked="{Binding MillingSimulator1.ShowPath, Mode=TwoWay}"></CheckBox>
+            <Label Grid.Row="12" Content="Show path" Grid.ColumnSpan="2"></Label>
+            <CheckBox Grid.Column="2" Grid.Row="12" IsChecked="{Binding MillingSimulator1.ShowPath, Mode=TwoWay}"></CheckBox>
 
-            <ListView Grid.Row="12" Grid.ColumnSpan="3" ItemsSource="{Binding MillingSimulator1.MovesList}" VerticalAlignment="Stretch" >
+            <Label Grid.Row="13" Content="Progress bar" Grid.ColumnSpan="2"></Label>
+            <ProgressBar Name="SimulationProgressBar" Grid.Row="13" Grid.Column="2" Minimum="0" Value="{Binding MillingSimulator1.Progress}" Maximum="1"></ProgressBar>
+            
+            <ListView Grid.Row="14" Grid.ColumnSpan="3" ItemsSource="{Binding MillingSimulator1.MovesList}" VerticalAlignment="Stretch" >
                 <!--<GridViewColumn Header="X" Width="60" DisplayMemberBinding="{Binding X, StringFormat=N2}"/>-->
                 <!--<GridViewColumn Header="Y" Width="60" DisplayMemberBinding="{Binding X, StringFormat=N2}"/>
                             <GridViewColumn Header="Z" Width="60" DisplayMemberBinding="{Binding X, StringFormat=N2}"/>-->

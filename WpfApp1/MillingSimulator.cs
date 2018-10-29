@@ -28,6 +28,7 @@ public class MillingSimulator : ViewModelBase
         _cutter = new Cutter(VBOHelpers.ConvertToOpenGLSpace(ToolCenterPositionCoordinates));
     }
 
+
     Vector3 ToolCenterPositionCoordinates = new Vector3(0, 0, 80);
     Cutter _cutter; // = new Cutter(ToolCenterPositionCoordinates);
     private int _animationSpeed = 20;
@@ -108,8 +109,10 @@ public class MillingSimulator : ViewModelBase
         Material1.Draw();
         Cutter1.Draw();
         if (frozenCutterCeneterPointPosition.HasValue && _showPath) {
+            GL.LineWidth(3);
             GL.Begin(BeginMode.LineStrip);
             GL.Color3(0.0, 1.0, 0.0);
+        
             GL.Vertex3(frozenCutterCeneterPointPosition.Value);
             foreach (var item in _movesList)
             {
@@ -152,15 +155,39 @@ public class MillingSimulator : ViewModelBase
     }
 
     private DispatcherTimer timer;
-    public int StepNumber = 0;
+    int _stepNumber = 0;
+
+    public int StepNumber
+    {
+        get
+        {
+            return _stepNumber;
+        }
+        set
+        {
+            _stepNumber = value;
+            OnPropertyChanged(nameof(StepNumber));
+        }
+    }
     private List<LinearMillingMove> SimulationTemporaryList = new List<LinearMillingMove>();
+    private bool _simulationResultButtonIsEnabled=true;
 
-
+    public bool SimulationResultButtonIsEnabled
+    {
+        get { return _simulationResultButtonIsEnabled; }
+        set
+        {
+            _simulationResultButtonIsEnabled = value;
+            OnPropertyChanged(nameof(SimulationResultButtonIsEnabled));
+        }
+    }
     public void StartSimulation()
     {
         if (_movesList.Any())
         {
+            SimulationResultButtonIsEnabled = false;
             StepNumber = 0;
+            //ProgressBarValue = 0;
             ////debug
             SimulationTemporaryList.Clear();
             //foreach (var item in _movesList)
@@ -169,9 +196,10 @@ public class MillingSimulator : ViewModelBase
             //}
 
             SimulationTemporaryList = _movesList.ToList();
-
+            _progress = 0;
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(30);
+            //timer.Interval = TimeSpan.FromMilliseconds(30);
+            timer.Interval = TimeSpan.FromMilliseconds(100/(double) _animationSpeed);
             timer.Tick += TimerOnTick;
             timer.Start();
             //Cutter1.CenterPoint = new Vector3(100, 0, 0);
@@ -181,8 +209,21 @@ public class MillingSimulator : ViewModelBase
     }
 
 
+    private double _progress = 0;
+
+    public double Progress
+    {
+        get { return _progress; }
+        set
+        {
+            _progress = value;
+            OnPropertyChanged(nameof(Progress));
+        }
+    }
+
     private void TimerOnTick(object sender, EventArgs e)
     {
+        timer.Interval = TimeSpan.FromMilliseconds(100 / (double)_animationSpeed);
         // stopWatch.Stop();
         //MessageBox.Show(stopWatch.ElapsedMilliseconds.ToString());
         // ToolCenterPositionCoordinates.Y += 1f;
@@ -191,15 +232,18 @@ public class MillingSimulator : ViewModelBase
         //  stopWatch.Start();
         //Cutter1.CenterPoint = ToolCenterPositionCoordinates;
         //Cutter1.Draw();
+        Progress = (double)StepNumber / (double)SimulationTemporaryList.Count;
+
         while ((SimulationTemporaryList[StepNumber]._moveToPoint - ToolCenterPositionCoordinates).Length > AnimationSpeed)
         {
             var tempVector = 0.5f * (SimulationTemporaryList[StepNumber]._moveToPoint + ToolCenterPositionCoordinates);
             var tempLinearMillingMove = new LinearMillingMove(tempVector, SimulationTemporaryList[StepNumber].LineNumber, SimulationTemporaryList[StepNumber].LinearMoveCommandNumber);
 
             SimulationTemporaryList.Insert(StepNumber, tempLinearMillingMove);
+
         }
 
-        Material1.Cut(ToolCenterPositionCoordinates, SimulationTemporaryList[StepNumber], diameter: CutterDiameter, isSpherical: _cutterIsSphercal);
+       bool error= Material1.Cut(ToolCenterPositionCoordinates, SimulationTemporaryList[StepNumber], diameter: CutterDiameter, isSpherical: _cutterIsSphercal);
         ToolCenterPositionCoordinates = SimulationTemporaryList[StepNumber]._moveToPoint;
 
 
@@ -209,19 +253,23 @@ public class MillingSimulator : ViewModelBase
         if (StepNumber < SimulationTemporaryList.Count - 1)
         {
             StepNumber++;
+
         }
         else
         {
             timer.Stop();
+            SimulationResultButtonIsEnabled = true;
         }
 
 
-        if (stopSimulationFlag)
+        if (stopSimulationFlag || error)
         {
             stopSimulationFlag = false;
             timer.Stop();
             ToolCenterPositionCoordinates = SimulationTemporaryList.Last()._moveToPoint;
             Cutter1.CenterPoint = ToolCenterPositionCoordinates;
+            Progress = 1;
+            SimulationResultButtonIsEnabled = true;
         }
     }
 
@@ -239,11 +287,16 @@ public class MillingSimulator : ViewModelBase
 
     public void SimulationResult()
     {
+        //Progress = 0;
+        //double moveListCount = _movesList.Count;
+        //double progressIterator = 0;
         foreach (var item in _movesList)
         {
-            Material1.Cut(ToolCenterPositionCoordinates, item, diameter: CutterDiameter, isSpherical: _cutterIsSphercal);
+            if (Material1.Cut(ToolCenterPositionCoordinates, item, diameter: CutterDiameter,
+                isSpherical: _cutterIsSphercal)) return;
             ToolCenterPositionCoordinates = item._moveToPoint;
-            // 
+            //progressIterator += 1;
+            //Progress = progressIterator / moveListCount;
         }
         Cutter1.CenterPoint = ToolCenterPositionCoordinates;
         Material1.ApplyChanges();
@@ -289,5 +342,8 @@ public class MillingSimulator : ViewModelBase
     public void StopSimulation()
     {
         stopSimulationFlag = true;
+
+
+
     }
 }

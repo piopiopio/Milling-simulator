@@ -23,9 +23,14 @@ namespace WpfApp1
             _materialWidth = 150;
             _materialHeight = 50;
             _materialDepth = 150;
-            _divisions = 200;
-            _divisionsNew = _divisions;
-            _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
+            //_divisions = 200;
+            //_divisionsNew = _divisions;
+            _divisionsWidth = (int)(_materialWidth / _accuracy);
+            _divisionsDepth = (int)(_materialDepth / _accuracy);
+
+            _divisionsString = "Divisions width: " + _divisionsWidth + " divisions depth: " + _divisionsDepth;
+            //  _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions, _divisions);
+            _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisionsWidth, _divisionsDepth);
         }
         private Cubes _shape0;
 
@@ -63,8 +68,8 @@ namespace WpfApp1
             {
                 _materialWidth = value;
                 //_shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
-               // OnLoad();
-               // OnPropertyChanged(nameof(MaterialWidth));
+                // OnLoad();
+                // OnPropertyChanged(nameof(MaterialWidth));
             }
         }
 
@@ -99,21 +104,51 @@ namespace WpfApp1
         }
 
 
-        public int _divisions;
+        // public int _divisions;
+        public int _divisionsWidth;
+        public int _divisionsDepth;
         public int _divisionsNew;
         private const int _maxDivisions = 1000;
-        public int Divisions
+
+
+        private float _accuracy = 1;
+        private string _divisionsString;
+
+        public string DivisionsString
         {
-            get { return _divisionsNew; }
+            get { return _divisionsString; }
             set
             {
-
-                _divisionsNew = Math.Min(value, _maxDivisions);
-                //_shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
-                //OnLoad();
-                //OnPropertyChanged(nameof(Divisions));
+                _divisionsString = value;
+                OnPropertyChanged(nameof(DivisionsString));
             }
         }
+
+        public float Accuracy
+        {
+            get { return _accuracy; }
+            set
+            {
+                _accuracy = value;
+                //OnPropertyChanged(nameof(Accuracy));
+                //_divisionsWidth = (int)(MaterialWidth / _accuracy);
+                //_divisionsDepth = (int)(MaterialDepth / _accuracy);
+                //DivisionsString = "Divisions width: " + _divisionsWidth + " divisions depth: " + _divisionsDepth;
+            }
+        }
+
+        //public int Divisions
+        //{
+        //    get { return _divisionsNew; }
+        //    set
+        //    {
+
+        //        _divisionsNew = Math.Min(value, _maxDivisions);
+        //        //_shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
+        //        //OnLoad();
+        //        //OnPropertyChanged(nameof(Divisions));
+        //    }
+        //}
 
         public void Draw()
         {
@@ -141,10 +176,17 @@ namespace WpfApp1
         public Vector3 ConvertToVoxelCoordinates(Vector3 input)
         {
             var temp = new Vector3();
-            xc = _divisions / _materialWidth;
-            var yc = _divisions / _materialDepth;
-            temp.X = (int)Math.Floor(input.X * xc + _divisions / 2);
-            temp.Y = (int)Math.Floor(input.Y * yc + _divisions / 2);
+            //xc = _divisions / _materialWidth;
+            //var yc = _divisions / _materialDepth;
+            //xc = 1;
+            //var yc = 1;
+            xc = 1/_accuracy;
+            var yc = 1/_accuracy;
+            //temp.X = (int)Math.Floor(input.X * xc + _divisions / 2);
+            //temp.Y = (int)Math.Floor(input.Y * yc + _divisions / 2);
+            //
+            temp.X = (int)Math.Floor(input.X * xc + _divisionsWidth / 2);
+            temp.Y = (int)Math.Floor(input.Y * yc + _divisionsDepth / 2);
             temp.Z = input.Z;
             return temp;
 
@@ -152,20 +194,20 @@ namespace WpfApp1
         }
 
         private float _minimalHeight = 20;
-
         public float MinimalHeight
         {
             get { return _minimalHeight; }
             set
             {
                 _minimalHeight = value;
-
+                OnPropertyChanged(nameof(MinimalHeight));
             }
         }
         private int lastLineNumberWithPlainCutterCutDownError;
         private int lastLineNumberWithTooLowHeightDownError;
-        public void Cut(Vector3 startPoint, LinearMillingMove endPoint, double diameter, bool isSpherical)
+        public bool Cut(Vector3 startPoint, LinearMillingMove endPoint, double diameter, bool isSpherical)
         {
+            bool stopSimulation = false;
             cutterInMaterial = false;
 
             var startPointConverted = ConvertToVoxelCoordinates(startPoint);
@@ -206,13 +248,31 @@ namespace WpfApp1
             if (downCuttingError && lastLineNumberWithPlainCutterCutDownError != endPoint.LineNumber)
             {
                 lastLineNumberWithPlainCutterCutDownError = endPoint.LineNumber;
-                MessageBox.Show("Plain cutter is cutting down, line number: " + endPoint.LineNumber.ToString());
+                //MessageBox.Show("Plain cutter is cutting down, line number: " + endPoint.LineNumber.ToString());
+                DialogResult dialogResult = MessageBox.Show("Plain cutter is cutting down, line number: " + endPoint.LineNumber.ToString()+", continue?", "Error", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    //do something
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    stopSimulation = true;
+                }
             }
 
             if (minimalHeightError && lastLineNumberWithTooLowHeightDownError != endPoint.LineNumber)
             {
                 lastLineNumberWithTooLowHeightDownError = endPoint.LineNumber;
-                MessageBox.Show("To low height, line number: " + endPoint.LineNumber.ToString());
+               // MessageBox.Show("To low height, line number: " + endPoint.LineNumber.ToString());
+                DialogResult dialogResult = MessageBox.Show("To low height, line number: " + endPoint.LineNumber.ToString()+ ", continue?", "Error", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    //do something
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    stopSimulation = true;
+                }
             }
 
             //Circle(
@@ -235,7 +295,7 @@ namespace WpfApp1
 
             // Shape0.RefreshVertices();
             //OnUpdateFrame();
-
+            return stopSimulation;
         }
 
         List<Tuple<int, int>> Line = new List<Tuple<int, int>>();
@@ -372,10 +432,16 @@ namespace WpfApp1
 
         public void Reset()
         {
-            _divisions = _divisionsNew;
-            _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisions);
-            OnLoad();
+            //_divisions = _divisionsNew;
+
             MaterialHeight = _materialHeight;
+
+            _divisionsWidth = (int)(MaterialWidth / _accuracy);
+            _divisionsDepth = (int)(MaterialDepth / _accuracy);
+            DivisionsString = "Divisions width: " + _divisionsWidth + " divisions depth: " + _divisionsDepth;
+
+            _shape0 = new Cubes(_materialWidth, _materialHeight, _materialDepth, _divisionsWidth, _divisionsDepth);
+            OnLoad();
             Refresh();
         }
     }
