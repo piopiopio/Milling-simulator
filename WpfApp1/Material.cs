@@ -111,7 +111,7 @@ namespace WpfApp1
         private const int _maxDivisions = 1000;
 
 
-        private float _accuracy = 1;
+      
         private string _divisionsString;
 
         public string DivisionsString
@@ -124,12 +124,14 @@ namespace WpfApp1
             }
         }
 
+        private float _accuracy = 1;
+        private float _newAccuracy = 1;
         public float Accuracy
         {
-            get { return _accuracy; }
+            get { return _newAccuracy; }
             set
             {
-                _accuracy = value;
+                _newAccuracy = value;
                 //OnPropertyChanged(nameof(Accuracy));
                 //_divisionsWidth = (int)(MaterialWidth / _accuracy);
                 //_divisionsDepth = (int)(MaterialDepth / _accuracy);
@@ -203,8 +205,14 @@ namespace WpfApp1
                 OnPropertyChanged(nameof(MinimalHeight));
             }
         }
-        private int lastLineNumberWithPlainCutterCutDownError;
-        private int lastLineNumberWithTooLowHeightDownError;
+        private int? lastLineNumberWithPlainCutterCutDownError;
+        private int? lastLineNumberWithTooLowHeightDownError;
+
+        public void ClearErrorLastLineNumber()
+        {
+            lastLineNumberWithPlainCutterCutDownError = null;
+            lastLineNumberWithTooLowHeightDownError = null;
+        }
         public bool Cut(Vector3 startPoint, LinearMillingMove endPoint, double diameter, bool isSpherical)
         {
             bool stopSimulation = false;
@@ -435,7 +443,7 @@ namespace WpfApp1
             //_divisions = _divisionsNew;
 
             MaterialHeight = _materialHeight;
-
+            _accuracy = _newAccuracy;
             _divisionsWidth = (int)(MaterialWidth / _accuracy);
             _divisionsDepth = (int)(MaterialDepth / _accuracy);
             DivisionsString = "Divisions width: " + _divisionsWidth + " divisions depth: " + _divisionsDepth;

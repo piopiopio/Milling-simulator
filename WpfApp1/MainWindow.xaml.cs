@@ -238,6 +238,7 @@ namespace WpfApp1
             return;
         }
 
+        
         private void StartSimulation_OnClick(object sender, RoutedEventArgs e)
         {
             MainViewModel1.MillingSimulator1.StartSimulation();

@@ -65,8 +65,8 @@
 
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="Load file" Click="LoadPath_OnClick"></Button>
-                <Button Grid.Column="1" Content="Start simulation" Name="StartSimulation" Click="StartSimulation_OnClick"></Button>
+                <Button Grid.Column="0" Content="Load file" Click="LoadPath_OnClick" IsEnabled="{Binding MillingSimulator1.LoadPathButtonIsEnabled}"></Button>
+                <Button Grid.Column="1" Content="Start simulation" Name="StartSimulation" Click="StartSimulation_OnClick" IsEnabled="{Binding MillingSimulator1.SimulationStartButtonIsEnabled}"></Button>
                 <Button Grid.Column="2" Content="Stop simulation" Name="StopSimulation" Click="StopSimulation_OnClick_imulation_OnClick"></Button>
                 <Button Grid.Column="3" Content="Simulation result" Name="SimulationResult" Click="SimulationResult_OnClick" IsEnabled="{Binding MillingSimulator1.SimulationResultButtonIsEnabled}"></Button>
                 <Button Grid.Column="4" Content="Default view" Name="DefaultView" Click="DefaultView_OnClick"></Button>

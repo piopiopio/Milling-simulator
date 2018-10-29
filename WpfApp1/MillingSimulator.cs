@@ -181,19 +181,40 @@ public class MillingSimulator : ViewModelBase
             OnPropertyChanged(nameof(SimulationResultButtonIsEnabled));
         }
     }
+
+    private bool _simulationStartButtonIsEnabled = true;
+
+    public bool SimulationStartButtonIsEnabled
+    {
+        get { return _simulationStartButtonIsEnabled; }
+        set
+        {
+            _simulationStartButtonIsEnabled = value;
+            OnPropertyChanged(nameof(SimulationStartButtonIsEnabled));
+        }
+    }
+
+    private bool _loadPathButtonIsEnabled = true;
+
+    public bool LoadPathButtonIsEnabled
+    {
+        get { return _loadPathButtonIsEnabled; }
+        set
+        {
+            _loadPathButtonIsEnabled = value;
+            OnPropertyChanged(nameof(LoadPathButtonIsEnabled));
+        }
+    }
     public void StartSimulation()
     {
         if (_movesList.Any())
         {
             SimulationResultButtonIsEnabled = false;
+            SimulationStartButtonIsEnabled = false;
+            LoadPathButtonIsEnabled = false;
             StepNumber = 0;
-            //ProgressBarValue = 0;
-            ////debug
             SimulationTemporaryList.Clear();
-            //foreach (var item in _movesList)
-            //{
-            //    SimulationTemporaryList.Add(item);
-            //}
+
 
             SimulationTemporaryList = _movesList.ToList();
             _progress = 0;
@@ -202,9 +223,6 @@ public class MillingSimulator : ViewModelBase
             timer.Interval = TimeSpan.FromMilliseconds(100/(double) _animationSpeed);
             timer.Tick += TimerOnTick;
             timer.Start();
-            //Cutter1.CenterPoint = new Vector3(100, 0, 0);
-
-            
         }
     }
 
@@ -258,18 +276,26 @@ public class MillingSimulator : ViewModelBase
         else
         {
             timer.Stop();
+            Material1.ClearErrorLastLineNumber();
             SimulationResultButtonIsEnabled = true;
+            SimulationStartButtonIsEnabled = true;
+            LoadPathButtonIsEnabled = true;
+
         }
 
 
         if (stopSimulationFlag || error)
         {
             stopSimulationFlag = false;
-            timer.Stop();
             ToolCenterPositionCoordinates = SimulationTemporaryList.Last()._moveToPoint;
             Cutter1.CenterPoint = ToolCenterPositionCoordinates;
             Progress = 1;
+            
+            timer.Stop();
+            Material1.ClearErrorLastLineNumber();
             SimulationResultButtonIsEnabled = true;
+            SimulationStartButtonIsEnabled = true;
+            LoadPathButtonIsEnabled = true;
         }
     }
 
