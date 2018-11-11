@@ -195,6 +195,7 @@ namespace WpfApp1
 
         }
 
+        private float _minimumHeightEpsilon = 0.0001f;
         private float _minimalHeight = 20;
         public float MinimalHeight
         {
@@ -215,6 +216,7 @@ namespace WpfApp1
         }
         public bool Cut(Vector3 startPoint, LinearMillingMove endPoint, double diameter, bool isSpherical)
         {
+            ClearErrorLastLineNumber();
             bool stopSimulation = false;
             cutterInMaterial = false;
 
@@ -231,6 +233,7 @@ namespace WpfApp1
 
             for (int i = 0; i < a.Count; i++)
             {
+                tempheight += delta;
 
                 Circle(
                     a[i].Item1,
@@ -238,12 +241,13 @@ namespace WpfApp1
                     tempheight,
                     (int)(xc * diameter / 2),
                     isSpherical);
-                if (tempheight < _minimalHeight)
+
+                if (tempheight < (_minimalHeight-_minimumHeightEpsilon))
                 {
                     minimalHeightError = true;
                 }
 
-                tempheight += delta;
+               
 
                 if (cutterInMaterial && delta < -0.000001 && !isSpherical)
                 {
@@ -271,8 +275,8 @@ namespace WpfApp1
             if (minimalHeightError && lastLineNumberWithTooLowHeightDownError != endPoint.LineNumber)
             {
                 lastLineNumberWithTooLowHeightDownError = endPoint.LineNumber;
-               // MessageBox.Show("To low height, line number: " + endPoint.LineNumber.ToString());
-                DialogResult dialogResult = MessageBox.Show("To low height, line number: " + endPoint.LineNumber.ToString()+ ", continue?", "Error", MessageBoxButtons.YesNo);
+               // MessageBox.Show("Too low height, line number: " + endPoint.LineNumber.ToString());
+                DialogResult dialogResult = MessageBox.Show("Too low height, line number: " + endPoint.LineNumber.ToString()+ ", continue?", "Error", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
                     //do something
@@ -374,7 +378,11 @@ namespace WpfApp1
                 if (Shape0.heightArray.GetLength(0) > point.Item1 && Shape0.heightArray.GetLength(1) > point.Item2 &&
                     point.Item1 >= 0 && point.Item2 >= 0)
                 {
-                    cutterInMaterial = Shape0.ModifyHeightArray(point.Item1, point.Item2, point.Item3);
+                    //cutterInMaterial = Shape0.ModifyHeightArray(point.Item1, point.Item2, point.Item3);
+                    if (Shape0.ModifyHeightArray(point.Item1, point.Item2, point.Item3))
+                    {
+                        cutterInMaterial = true;
+                    }
                 }
 
             }

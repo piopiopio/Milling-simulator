@@ -319,7 +319,12 @@ public class MillingSimulator : ViewModelBase
         foreach (var item in _movesList)
         {
             if (Material1.Cut(ToolCenterPositionCoordinates, item, diameter: CutterDiameter,
-                isSpherical: _cutterIsSphercal)) return;
+                isSpherical: _cutterIsSphercal))
+            {
+                Material1.ApplyChanges();
+                Refresh();
+                return;
+            }
             ToolCenterPositionCoordinates = item._moveToPoint;
             //progressIterator += 1;
             //Progress = progressIterator / moveListCount;
