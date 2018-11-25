@@ -361,7 +361,8 @@ namespace WpfApp1
                         if (isSpherical)
                         {
                             float height = (float)-Math.Sqrt(radius * radius - i * i - j * j);
-                            Temp.Add(new Tuple<int, int, float>(i + x1, j + y1, height + z1 + radius));
+                           // Temp.Add(new Tuple<int, int, float>(i + x1, j + y1, height + z1 + radius));
+                            Temp.Add(new Tuple<int, int, float>(i + x1, j + y1, height * _accuracy + z1+radius*_accuracy));
                         }
                         else
                         {

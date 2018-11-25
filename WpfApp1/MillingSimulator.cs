@@ -142,6 +142,8 @@ public class MillingSimulator : ViewModelBase
     {
         OpenFileDialog op = new OpenFileDialog();
         op.Title = "Open";
+        op.Filter =
+            "G-code files (*.k*;*.f*)|*.k*;*.f*|Round Mill files (*.k*)|*.k*|Flat Mill files (*.f*)|*.f*|All files (*.*)|*.*";
         if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
             MovesList = _fileReader.ParseGCode(op.FileName);

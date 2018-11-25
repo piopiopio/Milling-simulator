@@ -136,7 +136,7 @@ namespace WpfApp1
         {
             if (DateTime.Now.Subtract(lastMeasureTime) > TimeSpan.FromSeconds(1))
             {
-                Title = "PUSN: " + frames + "fps";
+                Title = "Milling Simulator: " + frames + "fps";
                 frames = 0;
                 lastMeasureTime = DateTime.Now;
             }
