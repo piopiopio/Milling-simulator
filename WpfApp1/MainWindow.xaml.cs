@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using ModelowanieGeometryczne.ViewModel;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace WpfApp1
@@ -216,58 +217,75 @@ namespace WpfApp1
             Refresh();
         }
 
-        private void LoadPath_OnClick(object sender, RoutedEventArgs e)
+        private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
         {
-            MainViewModel1.MillingSimulator1.LoadPath();
+            switch (e.Key)
+            {
+                case Key.OemMinus:
+                    MainViewModel1.MillingSimulator1.Scale -= 2 / 3000.0;
+                    Refresh();
+                    break;
+                case Key.OemPlus:
+                    MainViewModel1.MillingSimulator1.Scale += 2 / 3000.0;
+                    Refresh();
+                    break;
+
         }
 
-        private void OpentkWindow_OnInitialized(object sender, EventArgs e)
-        {
-            glControl = new GLControl();
-            //glControl.MakeCurrent();
-            glControl.TopLevel = false;
-            glControl.Paint += GlControlOnPaint;
-            // glControl.MouseWheel += _glControl_MouseWheel;
-            glControl.MouseDown += _glControl_MouseDown;
-            glControl.MouseMove += _glControl_MouseMove;
-            glControl.MouseWheel += GlControl_MouseWheel;
-            (sender as WindowsFormsHost).Child = glControl;
-        }
-        void GlControl_MouseWheel(object sender, MouseEventArgs e)
-        {
-            return;
-        }
-
-        
-        private void StartSimulation_OnClick(object sender, RoutedEventArgs e)
-        {
-            MainViewModel1.MillingSimulator1.StartSimulation();
-        }
-
-        private void DefaultView_OnClick(object sender, RoutedEventArgs e)
-        {
-            _alphaX = 0;
-            _alphaY = 0;
-            _alphaZ = 0;
-
-            glControl.Invalidate();
-        }
-
-        private void SimulationResult_OnClick(object sender, RoutedEventArgs e)
-        {
-            MainViewModel1.MillingSimulator1.SimulationResult();
-        }
-
-        private void ResetMaterial_OnClick(object sender, RoutedEventArgs e)
-        {
-            MainViewModel1.MillingSimulator1.ResetMaterial();
-        }
-
-        private void StopSimulation_OnClick_imulation_OnClick(object sender, RoutedEventArgs e)
-        {
-            MainViewModel1.MillingSimulator1.StopSimulation();
-        }
     }
+
+    private void LoadPath_OnClick(object sender, RoutedEventArgs e)
+    {
+        MainViewModel1.MillingSimulator1.LoadPath();
+    }
+
+    private void OpentkWindow_OnInitialized(object sender, EventArgs e)
+    {
+        glControl = new GLControl();
+        //glControl.MakeCurrent();
+        glControl.TopLevel = false;
+        glControl.Paint += GlControlOnPaint;
+        // glControl.MouseWheel += _glControl_MouseWheel;
+        glControl.MouseDown += _glControl_MouseDown;
+        glControl.MouseMove += _glControl_MouseMove;
+        glControl.MouseWheel += GlControl_MouseWheel;
+        (sender as WindowsFormsHost).Child = glControl;
+    }
+    void GlControl_MouseWheel(object sender, MouseEventArgs e)
+    {
+        return;
+    }
+
+
+    private void StartSimulation_OnClick(object sender, RoutedEventArgs e)
+    {
+        MainViewModel1.MillingSimulator1.StartSimulation();
+    }
+
+    private void DefaultView_OnClick(object sender, RoutedEventArgs e)
+    {
+        _alphaX = 0;
+        _alphaY = 0;
+        _alphaZ = 0;
+
+        glControl.Invalidate();
+    }
+
+    private void SimulationResult_OnClick(object sender, RoutedEventArgs e)
+    {
+        MainViewModel1.MillingSimulator1.SimulationResult();
+    }
+
+    private void ResetMaterial_OnClick(object sender, RoutedEventArgs e)
+    {
+        MainViewModel1.MillingSimulator1.ResetMaterial();
+    }
+
+    private void StopSimulation_OnClick_imulation_OnClick(object sender, RoutedEventArgs e)
+    {
+        MainViewModel1.MillingSimulator1.StopSimulation();
+    }
+}
 
     #endregion
 }

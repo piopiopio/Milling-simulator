@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         xmlns:viewModel="clr-namespace:ModelowanieGeometryczne.ViewModel"
+        KeyDown="MainWindow_OnKeyDown"
 
 
         mc:Ignorable="d"
